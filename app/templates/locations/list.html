@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}地点管理 - APAC Task Manager{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- 页面头部 -->
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">地点管理</h1>
+        <a href="{{ url_for('locations.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            新建地点
+        </a>
+    </div>
+
+    <!-- 搜索与筛选 -->
+    <form method="get" class="flex flex-wrap items-center gap-3">
+        <div class="flex-1 min-w-[200px]">
+            <input type="text" name="search" value="{{ search }}" placeholder="搜索地点名称/国家/城市..." class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div>
+            <select name="active" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">全部状态</option>
+                <option value="yes" {% if active_filter == 'yes' %}selected{% endif %}>激活</option>
+                <option value="no" {% if active_filter == 'no' %}selected{% endif %}>停用</option>
+            </select>
+        </div>
+        <button type="submit" class="px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700">
+            搜索
+        </button>
+        <a href="{{ url_for('locations.list') }}" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50">
+            重置
+        </a>
+    </form>
+
+    <!-- 地点表格 -->
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">地点名称</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">国家</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">城市</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">区域</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for loc in locations.items %}
+                <tr class="table-row-hover">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ loc.location_name }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">{{ loc.country or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">{{ loc.city or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">{{ loc.location_type or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">{{ loc.region or '-' }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        {% if loc.is_active %}
+                        <span class="badge badge-completed">激活</span>
+                        {% else %}
+                        <span class="badge badge-cancelled">停用</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-right space-x-1">
+                        <a href="{{ url_for('locations.edit', id=loc.id) }}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded hover:bg-blue-100">编辑</a>
+                        <form method="post" action="{{ url_for('locations.toggle_active', id=loc.id) }}" class="inline">
+                            <button type="submit" class="inline-flex items-center px-2 py-1 text-xs font-medium {{ 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100' if loc.is_active else 'text-green-700 bg-green-50 hover:bg-green-100' }} rounded">
+                                {{ '停用' if loc.is_active else '激活' }}
+                            </button>
+                        </form>
+                        <form method="post" action="{{ url_for('locations.delete', id=loc.id) }}" class="inline" onsubmit="return confirm('确定要删除地点 {{ loc.location_name }} 吗？')">
+                            <button type="submit" class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 bg-red-50 rounded hover:bg-red-100">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500">暂无地点数据</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 分页 -->
+    {% if locations.pages > 1 %}
+    <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-600">
+            共 {{ locations.total }} 条记录，第 {{ locations.page }} / {{ locations.pages }} 页
+        </p>
+        <div class="flex items-center space-x-1">
+            {% if locations.has_prev %}
+            <a href="{{ url_for('locations.list', page=locations.prev_num, search=search, active=active_filter) }}" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50">上一页</a>
+            {% endif %}
+
+            {% for p in locations.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p %}
+                <a href="{{ url_for('locations.list', page=p, search=search, active=active_filter) }}" class="px-3 py-1 text-sm border rounded-md {{ 'bg-blue-600 text-white border-blue-600' if p == locations.page else 'border-gray-300 hover:bg-gray-50' }}">{{ p }}</a>
+                {% else %}
+                <span class="px-2 py-1 text-sm text-gray-400">...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if locations.has_next %}
+            <a href="{{ url_for('locations.list', page=locations.next_num, search=search, active=active_filter) }}" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50">下一页</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
