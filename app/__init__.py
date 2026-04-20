@@ -22,7 +22,7 @@ def create_app():
     from .routes import tasks
     app.register_blueprint(tasks.bp)
     app.register_blueprint(locations.bp)
-    # from .routes import data_io
-    # app.register_blueprint(data_io.bp)
+    from .routes import data_io
+    app.register_blueprint(data_io.bp)
 
     return app
