@@ -17,9 +17,10 @@ def create_app():
 
     # TODO: uncomment as routes are created
     from .routes import locations
-    # from .routes import dashboard, tasks, data_io
+    # from .routes import dashboard, data_io
     # app.register_blueprint(dashboard.bp)
-    # app.register_blueprint(tasks.bp)
+    from .routes import tasks
+    app.register_blueprint(tasks.bp)
     app.register_blueprint(locations.bp)
     # app.register_blueprint(data_io.bp)
 
