@@ -11,10 +11,9 @@ def create_app():
 
     db.init_app(app)
 
-    # TODO: uncomment when models are created
-    # with app.app_context():
-    #     from . import models
-    #     db.create_all()
+    with app.app_context():
+        from . import models
+        db.create_all()
 
     # TODO: uncomment as routes are created
     # from .routes import dashboard, tasks, locations, data_io
