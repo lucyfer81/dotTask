@@ -16,12 +16,13 @@ def create_app():
         db.create_all()
 
     # TODO: uncomment as routes are created
+    from .routes import dashboard
+    app.register_blueprint(dashboard.bp)
     from .routes import locations
-    # from .routes import dashboard, data_io
-    # app.register_blueprint(dashboard.bp)
     from .routes import tasks
     app.register_blueprint(tasks.bp)
     app.register_blueprint(locations.bp)
+    # from .routes import data_io
     # app.register_blueprint(data_io.bp)
 
     return app
