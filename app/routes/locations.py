@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
 from app.models import Location, TaskAssignment, Task
@@ -53,6 +55,55 @@ def detail(id):
         unassigned_tasks=unassigned_tasks,
         local_status_options=get_options("local_statuses"),
     )
+
+
+@bp.route("/<int:id>/assign", methods=["POST"])
+def assign_task(id):
+    loc = Location.query.get_or_404(id)
+    task_id = request.form.get("task_id", type=int)
+    if task_id:
+        existing = TaskAssignment.query.filter_by(task_id=task_id, location_id=id).first()
+        if not existing:
+            assignment = TaskAssignment(
+                task_id=task_id,
+                location_id=id,
+                it_name=request.form.get("it_name", ""),
+                it_role=request.form.get("it_role", ""),
+                local_responsibility=request.form.get("local_responsibility", ""),
+            )
+            db.session.add(assignment)
+            db.session.commit()
+            flash("Task assigned", "success")
+    return redirect(url_for("locations.detail", id=id))
+
+
+@bp.route("/<int:loc_id>/assignment/<int:assignment_id>", methods=["POST"])
+def update_assignment(loc_id, assignment_id):
+    assignment = TaskAssignment.query.get_or_404(assignment_id)
+    assignment.local_status = request.form.get("local_status", assignment.local_status)
+    new_log = request.form.get("task_log_entry", "").strip()
+    if new_log:
+        from datetime import datetime as dt
+        timestamp = dt.now().strftime("[%Y-%m-%d %H:%M]")
+        entry = f"{timestamp} {new_log}"
+        if assignment.task_log:
+            assignment.task_log += f"\n{entry}"
+        else:
+            assignment.task_log = entry
+    assignment.it_name = request.form.get("it_name", assignment.it_name or "")
+    assignment.last_update = date.today()
+    db.session.commit()
+    flash("Assignment updated", "success")
+    return redirect(url_for("locations.detail", id=loc_id))
+
+
+@bp.route("/<int:loc_id>/assignment/<int:assignment_id>/delete", methods=["POST"])
+def remove_assignment(loc_id, assignment_id):
+    assignment = TaskAssignment.query.get_or_404(assignment_id)
+    db.session.delete(assignment)
+    db.session.commit()
+    flash("Assignment removed", "success")
+    return redirect(url_for("locations.detail", id=loc_id))
 
 
 @bp.route("/new", methods=["GET", "POST"])
