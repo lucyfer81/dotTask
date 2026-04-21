@@ -33,7 +33,7 @@
     <!-- Scope Info -->
     <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-4">
         <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-            <span><strong>Scope:</strong> {{ task.scope_type }}{% if task.scope_detail %} - {{ task.scope_detail }}{% endif %}</span>
+            <span><strong>Scope:</strong> {{ task.scope_country or 'All Countries' }} / {{ task.scope_location_type or 'All Types' }}</span>
             <span><strong>Execution Model:</strong> {{ task.execution_model or '-' }}</span>
             <span><strong>Assigned Locations:</strong> {{ assignments | length }}</span>
         </div>
@@ -75,16 +75,38 @@
                         <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.last_update.strftime('%Y-%m-%d') if task.last_update else '-' }}</dd>
                     </div>
-                    {% if task.link_to_file %}
+                    {% set file_links = task.file_links %}
+                    {% if file_links %}
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">File Link</dt>
-                        <dd class="text-sm mt-1"><a href="{{ task.link_to_file }}" target="_blank" class="text-blue-600 hover:text-blue-800">{{ task.link_to_file }}</a></dd>
+                        <dt class="text-sm font-medium text-gray-500">File Links</dt>
+                        <dd class="text-sm mt-1 space-y-1">
+                            {% for link in file_links %}
+                            <a href="{{ link.url }}" target="_blank" rel="noopener"
+                               class="flex items-center gap-1 text-blue-600 hover:text-blue-800">
+                                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                                {{ link.name }}
+                            </a>
+                            {% endfor %}
+                        </dd>
                     </div>
                     {% endif %}
-                    {% if task.link_to_mail %}
+                    {% set mail_links = task.mail_links %}
+                    {% if mail_links %}
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Email Link</dt>
-                        <dd class="text-sm mt-1"><a href="{{ task.link_to_mail }}" target="_blank" class="text-blue-600 hover:text-blue-800">{{ task.link_to_mail }}</a></dd>
+                        <dt class="text-sm font-medium text-gray-500">Email Links</dt>
+                        <dd class="text-sm mt-1 space-y-1">
+                            {% for link in mail_links %}
+                            <a href="{{ link.url }}" target="_blank" rel="noopener"
+                               class="flex items-center gap-1 text-blue-600 hover:text-blue-800">
+                                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                {{ link.name }}
+                            </a>
+                            {% endfor %}
+                        </dd>
                     </div>
                     {% endif %}
                     {% if task.comments %}
@@ -128,13 +150,11 @@
                                     class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Issue / Blocker</label>
-                                <input type="text" name="issue_blocker" value="{{ assignment.issue_blocker or '' }}"
-                                    class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Comments</label>
-                                <input type="text" name="comments" value="{{ assignment.comments or '' }}"
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Task Log</label>
+                                {% if assignment.task_log %}
+                                <div class="mb-2 p-2 bg-gray-50 rounded text-xs text-gray-700 whitespace-pre-wrap max-h-40 overflow-y-auto border border-gray-200">{{ assignment.task_log }}</div>
+                                {% endif %}
+                                <input type="text" name="task_log_entry" placeholder="Add a log entry..."
                                     class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="sm:col-span-2 flex justify-end">
@@ -254,7 +274,7 @@
                 <ul class="text-sm text-red-700 space-y-1">
                     {% for a in assignments %}
                     {% if a.local_status == 'Blocked' %}
-                    <li>{{ a.location.location_name }}{% if a.issue_blocker %}: {{ a.issue_blocker }}{% endif %}</li>
+                    <li>{{ a.location.location_name }}</li>
                     {% endif %}
                     {% endfor %}
                 </ul>

@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 from app import db
 
@@ -35,17 +36,16 @@ class Task(db.Model):
     task_source = db.Column(db.String(200))
     stakeholder = db.Column(db.String(200))
     task_description = db.Column(db.Text)
-    scope_type = db.Column(db.String(50), default="Manual")
-    scope_rule = db.Column(db.String(300))
-    scope_detail = db.Column(db.String(300))
+    scope_country = db.Column(db.String(100))
+    scope_location_type = db.Column(db.String(50))
     task_owner = db.Column(db.String(200))
     execution_model = db.Column(db.String(200))
     overall_status = db.Column(db.String(50), default="Not Started")
     start_date = db.Column(db.Date)
     target_date = db.Column(db.Date)
     last_update = db.Column(db.Date)
-    link_to_file = db.Column(db.String(500))
-    link_to_mail = db.Column(db.String(500))
+    link_to_file = db.Column(db.Text)
+    link_to_mail = db.Column(db.Text)
     task_priority = db.Column(db.String(50), default="Medium")
     comments = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -57,6 +57,34 @@ class Task(db.Model):
 
     assignments = db.relationship("TaskAssignment", backref="task", lazy="dynamic",
                                   cascade="all, delete-orphan")
+
+    @property
+    def file_links(self):
+        """Return parsed list of {"name": ..., "url": ...} dicts."""
+        if self.link_to_file:
+            try:
+                return json.loads(self.link_to_file)
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return []
+
+    @file_links.setter
+    def file_links(self, value):
+        self.link_to_file = json.dumps(value, ensure_ascii=False) if value else None
+
+    @property
+    def mail_links(self):
+        """Return parsed list of {"name": ..., "url": ...} dicts."""
+        if self.link_to_mail:
+            try:
+                return json.loads(self.link_to_mail)
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return []
+
+    @mail_links.setter
+    def mail_links(self, value):
+        self.link_to_mail = json.dumps(value, ensure_ascii=False) if value else None
 
     def __repr__(self):
         return f"<Task {self.task_name}>"
@@ -75,6 +103,7 @@ class TaskAssignment(db.Model):
     last_update = db.Column(db.Date)
     issue_blocker = db.Column(db.Text)
     comments = db.Column(db.Text)
+    task_log = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(
         db.DateTime,

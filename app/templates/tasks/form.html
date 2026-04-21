@@ -58,34 +58,40 @@
         <!-- Assignment Scope -->
         <div class="mb-8">
             <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Assignment Scope</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                    <label for="scope_type" class="block text-sm font-medium text-gray-700 mb-1">Scope Type</label>
-                    <select id="scope_type" name="scope_type"
+                    <label for="scope_country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                    <select id="scope_country" name="scope_country"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        {% for st in scope_types %}
-                        <option value="{{ st }}" {% if (task and task.scope_type == st) or (not task and st == 'Manual') %}selected{% endif %}>{{ st }}</option>
+                        <option value="">-- All Countries --</option>
+                        {% for c in countries %}
+                        <option value="{{ c }}" {% if task and task.scope_country == c %}selected{% endif %}>{{ c }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label for="scope_rule" class="block text-sm font-medium text-gray-700 mb-1">Rule Description</label>
-                    <input type="text" id="scope_rule" name="scope_rule" value="{{ task.scope_rule if task else '' }}"
+                    <label for="scope_location_type" class="block text-sm font-medium text-gray-700 mb-1">Location Type</label>
+                    <select id="scope_location_type" name="scope_location_type"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <div>
-                    <label for="scope_detail" class="block text-sm font-medium text-gray-700 mb-1">Scope Detail</label>
-                    <input type="text" id="scope_detail" name="scope_detail" value="{{ task.scope_detail if task else '' }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">-- All Types --</option>
+                        {% for t in location_types %}
+                        <option value="{{ t }}" {% if task and task.scope_location_type == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
-            <!-- Scope Preview -->
-            <div id="scope-preview" class="mt-4 hidden">
-                <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
-                    <p class="text-sm font-medium text-blue-800">
-                        Matching locations: <span id="scope-count">0</span>
-                    </p>
-                    <p id="scope-names" class="text-sm text-blue-700 mt-1"></p>
+
+            <!-- Location Checkbox List -->
+            <div id="scope-locations" class="border border-gray-200 rounded-md max-h-80 overflow-y-auto">
+                <div class="p-3 bg-gray-50 border-b border-gray-200 flex items-center gap-3">
+                    <label class="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                        <input type="checkbox" id="select-all-locations" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        Select All
+                    </label>
+                    <span id="location-count" class="text-sm text-gray-500">0 locations</span>
+                </div>
+                <div id="location-checkboxes" class="divide-y divide-gray-100">
+                    <p class="text-sm text-gray-400 p-4">Loading locations...</p>
                 </div>
             </div>
         </div>
@@ -129,17 +135,29 @@
         <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Links & Comments</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Email Links -->
                 <div>
-                    <label for="link_to_file" class="block text-sm font-medium text-gray-700 mb-1">File Link</label>
-                    <input type="url" id="link_to_file" name="link_to_file" value="{{ task.link_to_file if task else '' }}"
-                        placeholder="https://..."
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Links</label>
+                    <div id="mail-links-container" class="space-y-2">
+                        <!-- Dynamic rows inserted here -->
+                    </div>
+                    <button type="button" onclick="addMailLinkRow()"
+                        class="mt-2 inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded hover:bg-blue-100">
+                        + Add Email
+                    </button>
+                    <input type="hidden" id="mail_links_json" name="mail_links_json" value="">
                 </div>
+                <!-- File Links -->
                 <div>
-                    <label for="link_to_mail" class="block text-sm font-medium text-gray-700 mb-1">Email Link</label>
-                    <input type="url" id="link_to_mail" name="link_to_mail" value="{{ task.link_to_mail if task else '' }}"
-                        placeholder="https://..."
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">File Links</label>
+                    <div id="file-links-container" class="space-y-2">
+                        <!-- Dynamic rows inserted here -->
+                    </div>
+                    <button type="button" onclick="addFileLinkRow()"
+                        class="mt-2 inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded hover:bg-blue-100">
+                        + Add File
+                    </button>
+                    <input type="hidden" id="file_links_json" name="file_links_json" value="">
                 </div>
                 <div class="md:col-span-2">
                     <label for="comments" class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
@@ -164,22 +182,94 @@
 
 {% block extra_js %}
 <script>
-    // Scope preview function
-    const scopeTypeEl = document.getElementById('scope_type');
-    const scopeDetailEl = document.getElementById('scope_detail');
+    // ===== Dynamic Link Rows =====
+    const MAIL_ROW_HTML = (name, url) => `
+        <div class="link-row flex items-center gap-2">
+            <input type="text" placeholder="Email name" value="${name}"
+                class="link-name flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="url" placeholder="https://outlook.office.com/..." value="${url}"
+                class="link-url flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <button type="button" onclick="this.parentElement.remove()"
+                class="px-2 py-1.5 text-red-600 hover:text-red-800 text-sm">&times;</button>
+        </div>`;
 
-    function updateScopePreview() {
-        const scopeType = scopeTypeEl.value;
-        const scopeDetail = scopeDetailEl.value;
+    const FILE_ROW_HTML = (name, url) => `
+        <div class="link-row flex items-center gap-2">
+            <input type="text" placeholder="File name" value="${name}"
+                class="link-name flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="url" placeholder="https://onedrive.live.com/..." value="${url}"
+                class="link-url flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <button type="button" onclick="this.parentElement.remove()"
+                class="px-2 py-1.5 text-red-600 hover:text-red-800 text-sm">&times;</button>
+        </div>`;
 
-        if (scopeType === 'Manual') {
-            document.getElementById('scope-preview').classList.add('hidden');
-            return;
-        }
+    function addMailLinkRow(name = '', url = '') {
+        document.getElementById('mail-links-container').insertAdjacentHTML('beforeend', MAIL_ROW_HTML(escapeHtml(name), escapeHtml(url)));
+    }
 
+    function addFileLinkRow(name = '', url = '') {
+        document.getElementById('file-links-container').insertAdjacentHTML('beforeend', FILE_ROW_HTML(escapeHtml(name), escapeHtml(url)));
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function collectLinks(containerId) {
+        const rows = document.querySelectorAll(`#${containerId} .link-row`);
+        const links = [];
+        rows.forEach(row => {
+            const name = row.querySelector('.link-name').value.trim();
+            const url = row.querySelector('.link-url').value.trim();
+            if (url) links.push({name: name || url, url: url});
+        });
+        return links;
+    }
+
+    // Sync hidden fields before form submit
+    document.querySelector('form').addEventListener('formdata', function(e) {
+        const mailLinks = collectLinks('mail-links-container');
+        const fileLinks = collectLinks('file-links-container');
+        e.formData.set('mail_links_json', mailLinks.length ? JSON.stringify(mailLinks) : '');
+        e.formData.set('file_links_json', fileLinks.length ? JSON.stringify(fileLinks) : '');
+    });
+
+    // Load existing links for edit mode
+    {% if task %}
+    {% if task.link_to_mail %}
+    try {
+        const existingMails = {{ task.link_to_mail | safe }};
+        existingMails.forEach(l => addMailLinkRow(l.name, l.url));
+    } catch(e) {}
+    {% endif %}
+    {% if task.link_to_file %}
+    try {
+        const existingFiles = {{ task.link_to_file | safe }};
+        existingFiles.forEach(l => addFileLinkRow(l.name, l.url));
+    } catch(e) {}
+    {% endif %}
+    {% endif %}
+
+    // Always start with at least one empty row if no existing data
+    if (!document.querySelector('#mail-links-container .link-row')) addMailLinkRow();
+    if (!document.querySelector('#file-links-container .link-row')) addFileLinkRow();
+
+    const countryEl = document.getElementById('scope_country');
+    const typeEl = document.getElementById('scope_location_type');
+    const selectAllEl = document.getElementById('select-all-locations');
+    const checkboxesContainer = document.getElementById('location-checkboxes');
+    const countEl = document.getElementById('location-count');
+
+    {% if task %}
+    const preSelectedIds = [{% for a in task.assignments.all() %}{{ a.location_id }}{% if not loop.last %},{% endif %}{% endfor %}];
+    {% else %}
+    const preSelectedIds = [];
+    {% endif %}
+
+    function loadLocations() {
         const formData = new FormData();
-        formData.append('scope_type', scopeType);
-        formData.append('scope_detail', scopeDetail);
+        formData.append('scope_country', countryEl.value);
+        formData.append('scope_location_type', typeEl.value);
 
         fetch('/tasks/scope-preview', {
             method: 'POST',
@@ -187,21 +277,56 @@
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('scope-count').textContent = data.count;
-            const names = data.names || [];
-            if (names.length > 0) {
-                document.getElementById('scope-names').textContent = names.slice(0, 20).join(', ') + (names.length > 20 ? ' ...' : '');
-            } else {
-                document.getElementById('scope-names').textContent = 'No matching locations';
+            const locations = data.locations || [];
+            countEl.textContent = locations.length + ' locations';
+
+            if (locations.length === 0) {
+                checkboxesContainer.innerHTML = '<p class="text-sm text-gray-400 p-4">No matching locations</p>';
+                selectAllEl.checked = false;
+                return;
             }
-            document.getElementById('scope-preview').classList.remove('hidden');
+
+            let html = '';
+            locations.forEach(loc => {
+                const checked = preSelectedIds.includes(loc.id) ? 'checked' : '';
+                html += `
+                <label class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="selected_locations" value="${loc.id}" ${checked}
+                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 location-cb">
+                    <div>
+                        <span class="text-sm text-gray-900">${loc.name}</span>
+                        <span class="text-xs text-gray-500 ml-2">${loc.country || ''} / ${loc.type || ''}</span>
+                    </div>
+                </label>`;
+            });
+            checkboxesContainer.innerHTML = html;
+            updateSelectAll();
         })
         .catch(() => {
-            document.getElementById('scope-preview').classList.add('hidden');
+            checkboxesContainer.innerHTML = '<p class="text-sm text-red-400 p-4">Error loading locations</p>';
         });
     }
 
-    scopeTypeEl.addEventListener('change', updateScopePreview);
-    scopeDetailEl.addEventListener('input', updateScopePreview);
+    function updateSelectAll() {
+        const boxes = document.querySelectorAll('.location-cb');
+        if (boxes.length === 0) return;
+        const allChecked = Array.from(boxes).every(b => b.checked);
+        selectAllEl.checked = allChecked;
+    }
+
+    selectAllEl.addEventListener('change', function() {
+        document.querySelectorAll('.location-cb').forEach(cb => cb.checked = this.checked);
+    });
+
+    checkboxesContainer.addEventListener('change', function(e) {
+        if (e.target.classList.contains('location-cb')) {
+            updateSelectAll();
+        }
+    });
+
+    countryEl.addEventListener('change', loadLocations);
+    typeEl.addEventListener('change', loadLocations);
+
+    loadLocations();
 </script>
 {% endblock %}

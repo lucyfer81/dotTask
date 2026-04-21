@@ -1,14 +1,14 @@
-from datetime import date
+import json
+from datetime import date, datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app import db
 from app.models import Task, TaskAssignment, Location
-from app.services.scope_engine import get_matching_locations, get_scope_preview
+from app.services.scope_engine import get_scope_preview, get_distinct_countries, get_distinct_location_types
 
 bp = Blueprint("tasks", __name__, url_prefix="/tasks")
 
 STATUS_OPTIONS = ["Not Started", "In Progress", "Completed", "On Hold", "Cancelled"]
 PRIORITY_OPTIONS = ["Critical", "High", "Medium", "Low"]
-SCOPE_TYPES = ["All", "Country", "Location_Type", "Region", "Manual"]
 LOCAL_STATUS_OPTIONS = ["Pending", "In Progress", "Completed", "Blocked", "N/A"]
 
 
@@ -52,29 +52,26 @@ def create():
             task_source=request.form.get("task_source", ""),
             stakeholder=request.form.get("stakeholder", ""),
             task_description=request.form.get("task_description", ""),
-            scope_type=request.form.get("scope_type", "Manual"),
-            scope_rule=request.form.get("scope_rule", ""),
-            scope_detail=request.form.get("scope_detail", ""),
+            scope_country=request.form.get("scope_country", "") or None,
+            scope_location_type=request.form.get("scope_location_type", "") or None,
             task_owner=request.form.get("task_owner", ""),
             execution_model=request.form.get("execution_model", ""),
             overall_status=request.form.get("overall_status", "Not Started"),
             start_date=_parse_date(request.form.get("start_date")),
             target_date=_parse_date(request.form.get("target_date")),
             last_update=date.today(),
-            link_to_file=request.form.get("link_to_file", ""),
-            link_to_mail=request.form.get("link_to_mail", ""),
+            link_to_file=json.dumps(_parse_links(request.form.get("file_links_json", "")), ensure_ascii=False) or None,
+            link_to_mail=json.dumps(_parse_links(request.form.get("mail_links_json", "")), ensure_ascii=False) or None,
             task_priority=request.form.get("task_priority", "Medium"),
             comments=request.form.get("comments", ""),
         )
         db.session.add(task)
         db.session.flush()
 
-        # Auto-assign based on scope
-        if task.scope_type != "Manual":
-            locations = get_matching_locations(task.scope_type, task.scope_detail)
-            for loc in locations:
-                assignment = TaskAssignment(task_id=task.id, location_id=loc.id)
-                db.session.add(assignment)
+        selected_ids = request.form.getlist("selected_locations", type=int)
+        for loc_id in selected_ids:
+            assignment = TaskAssignment(task_id=task.id, location_id=loc_id)
+            db.session.add(assignment)
 
         db.session.commit()
         flash("Task created", "success")
@@ -83,7 +80,7 @@ def create():
     return render_template(
         "tasks/form.html", task=None,
         status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
-        scope_types=SCOPE_TYPES, locations=Location.query.filter_by(is_active=True).order_by(Location.location_name).all(),
+        countries=get_distinct_countries(), location_types=get_distinct_location_types(),
     )
 
 
@@ -101,7 +98,7 @@ def detail(id):
         "tasks/detail.html", task=task, assignments=assignments,
         unassigned_locations=unassigned_locations,
         status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
-        local_status_options=LOCAL_STATUS_OPTIONS, scope_types=SCOPE_TYPES,
+        local_status_options=LOCAL_STATUS_OPTIONS,
     )
 
 
@@ -113,17 +110,16 @@ def edit(id):
         task.task_source = request.form.get("task_source", "")
         task.stakeholder = request.form.get("stakeholder", "")
         task.task_description = request.form.get("task_description", "")
-        task.scope_type = request.form.get("scope_type", "Manual")
-        task.scope_rule = request.form.get("scope_rule", "")
-        task.scope_detail = request.form.get("scope_detail", "")
+        task.scope_country = request.form.get("scope_country", "") or None
+        task.scope_location_type = request.form.get("scope_location_type", "") or None
         task.task_owner = request.form.get("task_owner", "")
         task.execution_model = request.form.get("execution_model", "")
         task.overall_status = request.form.get("overall_status", "Not Started")
         task.start_date = _parse_date(request.form.get("start_date"))
         task.target_date = _parse_date(request.form.get("target_date"))
         task.last_update = date.today()
-        task.link_to_file = request.form.get("link_to_file", "")
-        task.link_to_mail = request.form.get("link_to_mail", "")
+        task.link_to_file = json.dumps(_parse_links(request.form.get("file_links_json", "")), ensure_ascii=False) or None
+        task.link_to_mail = json.dumps(_parse_links(request.form.get("mail_links_json", "")), ensure_ascii=False) or None
         task.task_priority = request.form.get("task_priority", "Medium")
         task.comments = request.form.get("comments", "")
         db.session.commit()
@@ -133,7 +129,7 @@ def edit(id):
     return render_template(
         "tasks/form.html", task=task,
         status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
-        scope_types=SCOPE_TYPES, locations=Location.query.filter_by(is_active=True).order_by(Location.location_name).all(),
+        countries=get_distinct_countries(), location_types=get_distinct_location_types(),
     )
 
 
@@ -181,8 +177,14 @@ def assign_location(id):
 def update_assignment(task_id, assignment_id):
     assignment = TaskAssignment.query.get_or_404(assignment_id)
     assignment.local_status = request.form.get("local_status", assignment.local_status)
-    assignment.issue_blocker = request.form.get("issue_blocker", assignment.issue_blocker or "")
-    assignment.comments = request.form.get("comments", assignment.comments or "")
+    new_log = request.form.get("task_log_entry", "").strip()
+    if new_log:
+        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M]")
+        entry = f"{timestamp} {new_log}"
+        if assignment.task_log:
+            assignment.task_log += f"\n{entry}"
+        else:
+            assignment.task_log = entry
     assignment.it_name = request.form.get("it_name", assignment.it_name or "")
     assignment.last_update = date.today()
     db.session.commit()
@@ -201,9 +203,9 @@ def remove_assignment(task_id, assignment_id):
 
 @bp.route("/scope-preview", methods=["POST"])
 def scope_preview():
-    scope_type = request.form.get("scope_type", "Manual")
-    scope_detail = request.form.get("scope_detail", "")
-    preview = get_scope_preview(scope_type, scope_detail)
+    country = request.form.get("scope_country", "")
+    location_type = request.form.get("scope_location_type", "")
+    preview = get_scope_preview(country or None, location_type or None)
     return jsonify(preview)
 
 
@@ -214,3 +216,15 @@ def _parse_date(value):
         except ValueError:
             return None
     return None
+
+
+def _parse_links(json_str):
+    """Parse JSON links string into list of {"name": ..., "url": ...} dicts.
+    Filter out entries with empty url."""
+    if not json_str:
+        return []
+    try:
+        links = json.loads(json_str)
+        return [l for l in links if l.get("url", "").strip()]
+    except (json.JSONDecodeError, TypeError):
+        return []

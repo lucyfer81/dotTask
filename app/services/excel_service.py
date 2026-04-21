@@ -37,7 +37,7 @@ def export_to_workbook():
             t.overall_status, str(t.start_date) if t.start_date else "",
             str(t.target_date) if t.target_date else "",
             str(t.last_update) if t.last_update else "",
-            t.link_to_file, t.link_to_mail, t.task_priority, t.comments,
+            t.link_to_file or "", t.link_to_mail or "", t.task_priority, t.comments,
         ])
 
     # Location_Master
@@ -109,8 +109,8 @@ def import_from_workbook(wb, sheet_name=None):
                     start_date=_to_date(row[11]),
                     target_date=_to_date(row[12]),
                     last_update=_to_date(row[13]),
-                    link_to_file=str(row[14] or ""),
-                    link_to_mail=str(row[15] or ""),
+                    link_to_file=str(row[14]) if row[14] else None,
+                    link_to_mail=str(row[15]) if row[15] else None,
                     task_priority=str(row[16] or "Medium"),
                     comments=str(row[17] or ""),
                 )
