@@ -52,7 +52,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 {% for loc in locations.items %}
                 <tr class="table-row-hover">
-                    <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ loc.location_name }}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-blue-700 hover:text-blue-900"><a href="{{ url_for('locations.detail', id=loc.id) }}">{{ loc.location_name }}</a></td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ loc.country or '-' }}</td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ loc.city or '-' }}</td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ loc.location_type or '-' }}</td>
