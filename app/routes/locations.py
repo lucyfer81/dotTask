@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
-from app.models import Location
+from app.models import Location, TaskAssignment
+from app.dropdowns import get_options
 
 bp = Blueprint("locations", __name__, url_prefix="/locations")
 
@@ -44,13 +45,14 @@ def create():
             is_active=request.form.get("is_active") == "on",
             it_manager=request.form.get("it_manager", ""),
             primary_it_contact=request.form.get("primary_it_contact", ""),
+            comments=request.form.get("comments", ""),
         )
         db.session.add(loc)
         db.session.commit()
         flash("Location created", "success")
         return redirect(url_for("locations.list"))
 
-    return render_template("locations/form.html", location=None)
+    return render_template("locations/form.html", location=None, countries=get_options("countries"), location_types=get_options("location_types"))
 
 
 @bp.route("/<int:id>/edit", methods=["GET", "POST"])
@@ -65,16 +67,18 @@ def edit(id):
         loc.is_active = request.form.get("is_active") == "on"
         loc.it_manager = request.form.get("it_manager", "")
         loc.primary_it_contact = request.form.get("primary_it_contact", "")
+        loc.comments = request.form.get("comments", "")
         db.session.commit()
         flash("Location updated", "success")
         return redirect(url_for("locations.list"))
 
-    return render_template("locations/form.html", location=loc)
+    return render_template("locations/form.html", location=loc, countries=get_options("countries"), location_types=get_options("location_types"))
 
 
 @bp.route("/<int:id>/delete", methods=["POST"])
 def delete(id):
     loc = Location.query.get_or_404(id)
+    TaskAssignment.query.filter_by(location_id=id).delete()
     db.session.delete(loc)
     db.session.commit()
     flash("Location deleted", "success")

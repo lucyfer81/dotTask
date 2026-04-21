@@ -1,0 +1,41 @@
+# 下拉框选项配置
+# 修改后需重启应用生效
+
+countries:
+  - China
+  - India
+  - Sri Lanka
+  - Thailand
+  - Malaysia
+  - Japan
+  - Korea
+  - Singapore
+  - Australia
+
+location_types:
+  - Plant
+  - Small Office
+  - Market Office
+  - Warehouse
+  - IT Hub
+  - Competence Center
+
+statuses:
+  - Not Started
+  - In Progress
+  - Completed
+  - On Hold
+  - Cancelled
+
+priorities:
+  - Critical
+  - High
+  - Medium
+  - Low
+
+local_statuses:
+  - Pending
+  - In Progress
+  - Completed
+  - Blocked
+  - Cancelled

@@ -12,7 +12,7 @@ LOCATION_HEADERS = [
 
 TASK_HEADERS = [
     "Task ID", "Task Name", "Task Source", "Stakeholder", "Task Description",
-    "Scope Type", "Scope Rule", "Scope Detail", "Task Owner", "Execution Model",
+    "Scope Country", "Scope Location Type", "Task Owner", "Execution Model",
     "Overall Status", "Start Date", "Target Date", "Last Update",
     "Link to File / Collection", "Link to Mail", "Task Priority", "Comments",
 ]
@@ -33,7 +33,7 @@ def export_to_workbook():
     for t in Task.query.order_by(Task.id):
         ws_task.append([
             t.id, t.task_name, t.task_source, t.stakeholder, t.task_description,
-            t.scope_type, t.scope_rule, t.scope_detail, t.task_owner, t.execution_model,
+            t.scope_country, t.scope_location_type, t.task_owner, t.execution_model,
             t.overall_status, str(t.start_date) if t.start_date else "",
             str(t.target_date) if t.target_date else "",
             str(t.last_update) if t.last_update else "",
@@ -100,19 +100,18 @@ def import_from_workbook(wb, sheet_name=None):
                     task_source=str(row[2] or ""),
                     stakeholder=str(row[3] or ""),
                     task_description=str(row[4] or ""),
-                    scope_type=str(row[5] or "Manual"),
-                    scope_rule=str(row[6] or ""),
-                    scope_detail=str(row[7] or ""),
-                    task_owner=str(row[8] or ""),
-                    execution_model=str(row[9] or ""),
-                    overall_status=str(row[10] or "Not Started"),
-                    start_date=_to_date(row[11]),
-                    target_date=_to_date(row[12]),
-                    last_update=_to_date(row[13]),
-                    link_to_file=str(row[14]) if row[14] else None,
-                    link_to_mail=str(row[15]) if row[15] else None,
-                    task_priority=str(row[16] or "Medium"),
-                    comments=str(row[17] or ""),
+                    scope_country=str(row[5]) if row[5] else None,
+                    scope_location_type=str(row[6]) if row[6] else None,
+                    task_owner=str(row[7] or ""),
+                    execution_model=str(row[8] or ""),
+                    overall_status=str(row[9] or "Not Started"),
+                    start_date=_to_date(row[10]),
+                    target_date=_to_date(row[11]),
+                    last_update=_to_date(row[12]),
+                    link_to_file=str(row[13]) if row[13] else None,
+                    link_to_mail=str(row[14]) if row[14] else None,
+                    task_priority=str(row[15] or "Medium"),
+                    comments=str(row[16] or ""),
                 )
                 db.session.add(task)
                 count += 1

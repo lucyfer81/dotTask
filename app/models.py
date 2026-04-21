@@ -15,6 +15,7 @@ class Location(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     it_manager = db.Column(db.String(200))
     primary_it_contact = db.Column(db.String(200))
+    comments = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(
         db.DateTime,

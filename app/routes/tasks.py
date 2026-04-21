@@ -3,13 +3,10 @@ from datetime import date, datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app import db
 from app.models import Task, TaskAssignment, Location
-from app.services.scope_engine import get_scope_preview, get_distinct_countries, get_distinct_location_types
+from app.services.scope_engine import get_scope_preview, get_distinct_countries
+from app.dropdowns import get_options
 
 bp = Blueprint("tasks", __name__, url_prefix="/tasks")
-
-STATUS_OPTIONS = ["Not Started", "In Progress", "Completed", "On Hold", "Cancelled"]
-PRIORITY_OPTIONS = ["Critical", "High", "Medium", "Low"]
-LOCAL_STATUS_OPTIONS = ["Pending", "In Progress", "Completed", "Blocked", "N/A"]
 
 
 @bp.route("/")
@@ -39,7 +36,7 @@ def list():
     return render_template(
         "tasks/list.html",
         tasks=tasks, search=search, status=status, priority=priority,
-        status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
+        status_options=get_options("statuses"), priority_options=get_options("priorities"),
         today=date.today(),
     )
 
@@ -79,8 +76,8 @@ def create():
 
     return render_template(
         "tasks/form.html", task=None,
-        status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
-        countries=get_distinct_countries(), location_types=get_distinct_location_types(),
+        status_options=get_options("statuses"), priority_options=get_options("priorities"),
+        countries=get_distinct_countries(), location_types=get_options("location_types"),
     )
 
 
@@ -97,8 +94,8 @@ def detail(id):
     return render_template(
         "tasks/detail.html", task=task, assignments=assignments,
         unassigned_locations=unassigned_locations,
-        status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
-        local_status_options=LOCAL_STATUS_OPTIONS,
+        status_options=get_options("statuses"), priority_options=get_options("priorities"),
+        local_status_options=get_options("local_statuses"),
     )
 
 
@@ -128,8 +125,8 @@ def edit(id):
 
     return render_template(
         "tasks/form.html", task=task,
-        status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
-        countries=get_distinct_countries(), location_types=get_distinct_location_types(),
+        status_options=get_options("statuses"), priority_options=get_options("priorities"),
+        countries=get_distinct_countries(), location_types=get_options("location_types"),
     )
 
 
@@ -146,7 +143,7 @@ def delete(id):
 def update_status(id):
     task = Task.query.get_or_404(id)
     new_status = request.form.get("overall_status")
-    if new_status in STATUS_OPTIONS:
+    if new_status in get_options("statuses"):
         task.overall_status = new_status
         task.last_update = date.today()
         db.session.commit()

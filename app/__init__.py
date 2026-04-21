@@ -13,6 +13,11 @@ def create_app():
 
     with app.app_context():
         from . import models
+        import os
+        db_path = app.config["SQLALCHEMY_DATABASE_URI"]
+        db_dir = os.path.dirname(db_path.replace("sqlite:///", ""))
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
         db.create_all()
         _migrate_db(db)
 
@@ -41,5 +46,16 @@ def _migrate_db(db):
         if 'task_log' not in columns:
             conn.execute(sqlalchemy.text(
                 "ALTER TABLE task_assignment ADD COLUMN task_log TEXT"
+            ))
+            conn.commit()
+
+        # Check if comments column exists in location_master
+        result = conn.execute(sqlalchemy.text(
+            "PRAGMA table_info(location_master)"
+        ))
+        loc_columns = {row[1] for row in result}
+        if 'comments' not in loc_columns:
+            conn.execute(sqlalchemy.text(
+                "ALTER TABLE location_master ADD COLUMN comments TEXT"
             ))
             conn.commit()

@@ -1,5 +1,6 @@
 from app import db
 from app.models import Location
+from app.dropdowns import get_options
 
 
 def get_filtered_locations(country=None, location_type=None):
@@ -26,16 +27,10 @@ def get_scope_preview(country=None, location_type=None):
 
 
 def get_distinct_countries():
-    """获取所有活跃地点的不重复 country 列表。"""
-    results = db.session.execute(
-        db.text("SELECT DISTINCT country FROM location_master WHERE is_active = 1 AND country IS NOT NULL ORDER BY country")
-    ).fetchall()
-    return [r[0] for r in results]
+    """获取所有 country 选项列表（来自配置文件）。"""
+    return get_options("countries")
 
 
 def get_distinct_location_types():
-    """获取所有活跃地点的不重复 location_type 列表。"""
-    results = db.session.execute(
-        db.text("SELECT DISTINCT location_type FROM location_master WHERE is_active = 1 AND location_type IS NOT NULL ORDER BY location_type")
-    ).fetchall()
-    return [r[0] for r in results]
+    """获取所有 location_type 选项列表（来自配置文件）。"""
+    return get_options("location_types")
