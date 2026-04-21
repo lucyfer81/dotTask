@@ -14,6 +14,7 @@ def create_app():
     with app.app_context():
         from . import models
         db.create_all()
+        _migrate_db(db)
 
     # TODO: uncomment as routes are created
     from .routes import dashboard
@@ -26,3 +27,19 @@ def create_app():
     app.register_blueprint(data_io.bp)
 
     return app
+
+
+def _migrate_db(db):
+    """Add columns that db.create_all() won't add to existing tables."""
+    import sqlalchemy
+    with db.engine.connect() as conn:
+        # Check if task_log column exists in task_assignment
+        result = conn.execute(sqlalchemy.text(
+            "PRAGMA table_info(task_assignment)"
+        ))
+        columns = {row[1] for row in result}
+        if 'task_log' not in columns:
+            conn.execute(sqlalchemy.text(
+                "ALTER TABLE task_assignment ADD COLUMN task_log TEXT"
+            ))
+            conn.commit()
