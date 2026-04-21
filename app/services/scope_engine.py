@@ -29,5 +29,4 @@ def get_scope_preview(scope_type, scope_detail):
     return {
         "count": len(locations),
         "names": [loc.location_name for loc in locations],
-        "locations": locations,
     }

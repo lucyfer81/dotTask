@@ -40,6 +40,7 @@ def list():
         "tasks/list.html",
         tasks=tasks, search=search, status=status, priority=priority,
         status_options=STATUS_OPTIONS, priority_options=PRIORITY_OPTIONS,
+        today=date.today(),
     )
 
 

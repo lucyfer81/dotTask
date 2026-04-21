@@ -72,6 +72,9 @@ def index():
         .all()
     )
 
+    # Convert Row tuples to lists for JSON serialization
+    location_stats_json = [[name, total, int(done or 0)] for name, total, done in location_stats]
+
     return render_template(
         "dashboard/index.html",
         total_tasks=total_tasks,
@@ -85,5 +88,6 @@ def index():
         status_data=dict(status_data),
         priority_data=dict(priority_data),
         location_stats=location_stats,
+        location_stats_json=location_stats_json,
         today=today,
     )
