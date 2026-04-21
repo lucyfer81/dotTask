@@ -4,3 +4,5 @@ instance/
 .env
 flask.log
 .flask.pid
+.playwright-mcp/
+*.png
