@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
-from app.models import Location, TaskAssignment
+from app.models import Location, TaskAssignment, Task
 from app.dropdowns import get_options
 
 bp = Blueprint("locations", __name__, url_prefix="/locations")
@@ -31,6 +31,28 @@ def list():
         page=page, per_page=per_page, error_out=False
     )
     return render_template("locations/list.html", locations=locations, search=search, active_filter=active_filter)
+
+
+@bp.route("/<int:id>")
+def detail(id):
+    loc = Location.query.get_or_404(id)
+    assignments = (
+        TaskAssignment.query
+        .filter_by(location_id=id)
+        .order_by(TaskAssignment.id)
+        .all()
+    )
+    assigned_task_ids = [a.task_id for a in assignments]
+    if assigned_task_ids:
+        unassigned_tasks = Task.query.filter(~Task.id.in_(assigned_task_ids)).order_by(Task.task_name).all()
+    else:
+        unassigned_tasks = Task.query.order_by(Task.task_name).all()
+
+    return render_template(
+        "locations/detail.html", location=loc, assignments=assignments,
+        unassigned_tasks=unassigned_tasks,
+        local_status_options=get_options("local_statuses"),
+    )
 
 
 @bp.route("/new", methods=["GET", "POST"])
