@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e5]:
+      - link "APAC Task Manager" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e8]:
+        - link "仪表盘" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "任务" [ref=e10] [cursor=pointer]:
+          - /url: /tasks
+        - link "地点" [ref=e11] [cursor=pointer]:
+          - /url: /locations
+        - link "导入导出" [ref=e12] [cursor=pointer]:
+          - /url: /data
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - heading "新建地点" [level=1] [ref=e16]
+        - link "返回列表" [ref=e17] [cursor=pointer]:
+          - /url: /locations/
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: 地点名称 *
+            - textbox "地点名称 *" [ref=e22]
+          - generic [ref=e23]:
+            - generic [ref=e24]: 国家
+            - textbox "国家" [ref=e25]
+          - generic [ref=e26]:
+            - generic [ref=e27]: 城市
+            - textbox "城市" [ref=e28]
+          - generic [ref=e29]:
+            - generic [ref=e30]: 地点类型
+            - textbox "地点类型" [ref=e31]:
+              - /placeholder: Plant / Office / Market Office
+          - generic [ref=e32]:
+            - generic [ref=e33]: 区域
+            - textbox "区域" [ref=e34]:
+              - /placeholder: APAC-North / APAC-South
+          - generic [ref=e35]:
+            - generic [ref=e36]: IT Manager
+            - textbox "IT Manager" [ref=e37]
+          - generic [ref=e38]:
+            - generic [ref=e39]: Primary IT Contact
+            - textbox "Primary IT Contact" [ref=e40]
+          - generic [ref=e41]:
+            - checkbox "激活状态" [checked] [ref=e42]
+            - generic [ref=e43]: 激活状态
+        - generic [ref=e44]:
+          - link "取消" [ref=e45] [cursor=pointer]:
+            - /url: /locations/
+          - button "保存" [ref=e46] [cursor=pointer]

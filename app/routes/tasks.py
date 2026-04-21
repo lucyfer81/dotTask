@@ -77,7 +77,7 @@ def create():
                 db.session.add(assignment)
 
         db.session.commit()
-        flash("任务已创建", "success")
+        flash("Task created", "success")
         return redirect(url_for("tasks.detail", id=task.id))
 
     return render_template(
@@ -127,7 +127,7 @@ def edit(id):
         task.task_priority = request.form.get("task_priority", "Medium")
         task.comments = request.form.get("comments", "")
         db.session.commit()
-        flash("任务已更新", "success")
+        flash("Task updated", "success")
         return redirect(url_for("tasks.detail", id=task.id))
 
     return render_template(
@@ -142,7 +142,7 @@ def delete(id):
     task = Task.query.get_or_404(id)
     db.session.delete(task)
     db.session.commit()
-    flash("任务已删除", "success")
+    flash("Task deleted", "success")
     return redirect(url_for("tasks.list"))
 
 
@@ -173,7 +173,7 @@ def assign_location(id):
             )
             db.session.add(assignment)
             db.session.commit()
-            flash("已分配地点", "success")
+            flash("Location assigned", "success")
     return redirect(url_for("tasks.detail", id=id))
 
 
@@ -186,7 +186,7 @@ def update_assignment(task_id, assignment_id):
     assignment.it_name = request.form.get("it_name", assignment.it_name or "")
     assignment.last_update = date.today()
     db.session.commit()
-    flash("分配状态已更新", "success")
+    flash("Assignment updated", "success")
     return redirect(url_for("tasks.detail", id=task_id))
 
 
@@ -195,7 +195,7 @@ def remove_assignment(task_id, assignment_id):
     assignment = TaskAssignment.query.get_or_404(assignment_id)
     db.session.delete(assignment)
     db.session.commit()
-    flash("已移除分配", "success")
+    flash("Assignment removed", "success")
     return redirect(url_for("tasks.detail", id=task_id))
 
 

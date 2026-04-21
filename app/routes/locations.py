@@ -47,7 +47,7 @@ def create():
         )
         db.session.add(loc)
         db.session.commit()
-        flash("地点已创建", "success")
+        flash("Location created", "success")
         return redirect(url_for("locations.list"))
 
     return render_template("locations/form.html", location=None)
@@ -66,7 +66,7 @@ def edit(id):
         loc.it_manager = request.form.get("it_manager", "")
         loc.primary_it_contact = request.form.get("primary_it_contact", "")
         db.session.commit()
-        flash("地点已更新", "success")
+        flash("Location updated", "success")
         return redirect(url_for("locations.list"))
 
     return render_template("locations/form.html", location=loc)
@@ -77,7 +77,7 @@ def delete(id):
     loc = Location.query.get_or_404(id)
     db.session.delete(loc)
     db.session.commit()
-    flash("地点已删除", "success")
+    flash("Location deleted", "success")
     return redirect(url_for("locations.list"))
 
 
@@ -86,6 +86,6 @@ def toggle_active(id):
     loc = Location.query.get_or_404(id)
     loc.is_active = not loc.is_active
     db.session.commit()
-    status = "激活" if loc.is_active else "停用"
-    flash(f"已{status}地点 {loc.location_name}", "success")
+    status = "activated" if loc.is_active else "deactivated"
+    flash(f"Location {loc.location_name} {status}", "success")
     return redirect(url_for("locations.list"))

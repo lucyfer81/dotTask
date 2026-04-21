@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e5]:
+      - link "APAC Task Manager" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e8]:
+        - link "Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "Tasks" [ref=e10] [cursor=pointer]:
+          - /url: /tasks
+        - link "Locations" [ref=e11] [cursor=pointer]:
+          - /url: /locations
+        - link "Import / Export" [ref=e12] [cursor=pointer]:
+          - /url: /data
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - heading "Locations" [level=1] [ref=e16]
+        - link "New Location" [ref=e17] [cursor=pointer]:
+          - /url: /locations/new
+          - img [ref=e18]
+          - text: New Location
+      - generic [ref=e20]:
+        - textbox "Search location name/country/city..." [ref=e22]
+        - combobox [ref=e24]:
+          - option "All Statuses" [selected]
+          - option "Active"
+          - option "Inactive"
+        - button "Search" [ref=e25] [cursor=pointer]
+        - link "Reset" [ref=e26] [cursor=pointer]:
+          - /url: /locations/
+      - table [ref=e28]:
+        - rowgroup [ref=e29]:
+          - row "Location Name Country City Type Region Status Actions" [ref=e30]:
+            - columnheader "Location Name" [ref=e31]
+            - columnheader "Country" [ref=e32]
+            - columnheader "City" [ref=e33]
+            - columnheader "Type" [ref=e34]
+            - columnheader "Region" [ref=e35]
+            - columnheader "Status" [ref=e36]
+            - columnheader "Actions" [ref=e37]
+        - rowgroup [ref=e38]:
+          - row "Hefei Plant China Hefei Plant APAC Active Edit Deactivate Delete" [ref=e39]:
+            - cell "Hefei Plant" [ref=e40]
+            - cell "China" [ref=e41]
+            - cell "Hefei" [ref=e42]
+            - cell "Plant" [ref=e43]
+            - cell "APAC" [ref=e44]
+            - cell "Active" [ref=e45]:
+              - generic [ref=e46]: Active
+            - cell "Edit Deactivate Delete" [ref=e47]:
+              - link "Edit" [ref=e48] [cursor=pointer]:
+                - /url: /locations/2/edit
+              - button "Deactivate" [ref=e50] [cursor=pointer]
+              - button "Delete" [ref=e52] [cursor=pointer]
+          - row "Shanghai Office China Shanghai Market Office APAC Active Edit Deactivate Delete" [ref=e53]:
+            - cell "Shanghai Office" [ref=e54]
+            - cell "China" [ref=e55]
+            - cell "Shanghai" [ref=e56]
+            - cell "Market Office" [ref=e57]
+            - cell "APAC" [ref=e58]
+            - cell "Active" [ref=e59]:
+              - generic [ref=e60]: Active
+            - cell "Edit Deactivate Delete" [ref=e61]:
+              - link "Edit" [ref=e62] [cursor=pointer]:
+                - /url: /locations/1/edit
+              - button "Deactivate" [ref=e64] [cursor=pointer]
+              - button "Delete" [ref=e66] [cursor=pointer]

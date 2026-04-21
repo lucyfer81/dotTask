@@ -1,0 +1,50 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e5]:
+      - link "APAC Task Manager" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e8]:
+        - link "Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "Tasks" [ref=e10] [cursor=pointer]:
+          - /url: /tasks
+        - link "Locations" [ref=e11] [cursor=pointer]:
+          - /url: /locations
+        - link "Import / Export" [ref=e12] [cursor=pointer]:
+          - /url: /data
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - heading "Dashboard" [level=1] [ref=e15]
+      - button "Export PDF Report" [ref=e16] [cursor=pointer]
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: Total Tasks
+        - generic [ref=e20]: "1"
+      - generic [ref=e21]:
+        - generic [ref=e22]: In Progress
+        - generic [ref=e23]: "0"
+      - generic [ref=e24]:
+        - generic [ref=e25]: Completed
+        - generic [ref=e26]: "0"
+      - generic [ref=e27]:
+        - generic [ref=e28]: Overdue
+        - generic [ref=e29]: "0"
+      - generic [ref=e30]:
+        - generic [ref=e31]: Blocked
+        - generic [ref=e32]: "0"
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - heading "Task Status Distribution" [level=2] [ref=e36]
+        - heading "Priority Distribution" [level=2] [ref=e40]
+      - heading "Progress by Location" [level=2] [ref=e43]
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - heading "Overdue Tasks" [level=2] [ref=e47]:
+          - img [ref=e48]
+          - text: Overdue Tasks
+        - paragraph [ref=e50]: No overdue tasks
+      - generic [ref=e51]:
+        - heading "Due Soon (within 7 days)" [level=2] [ref=e52]:
+          - img [ref=e53]
+          - text: Due Soon (within 7 days)
+        - paragraph [ref=e55]: No tasks due soon

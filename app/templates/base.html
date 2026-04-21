@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- 导航栏 -->
+    <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -19,17 +19,17 @@
                         <a href="/" class="text-xl font-bold text-gray-800">APAC Task Manager</a>
                     </div>
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-4">
-                        <a href="/" class="nav-link {% if request.path == '/' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">仪表盘</a>
-                        <a href="/tasks" class="nav-link {% if '/task' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">任务</a>
-                        <a href="/locations" class="nav-link {% if '/location' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">地点</a>
-                        <a href="/data" class="nav-link {% if '/data' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">导入导出</a>
+                        <a href="/" class="nav-link {% if request.path == '/' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Dashboard</a>
+                        <a href="/tasks" class="nav-link {% if '/task' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Tasks</a>
+                        <a href="/locations" class="nav-link {% if '/location' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Locations</a>
+                        <a href="/data" class="nav-link {% if '/data' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Import / Export</a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- 主内容 -->
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

@@ -1,0 +1,117 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e5]:
+      - link "APAC Task Manager" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e8]:
+        - link "仪表盘" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "任务" [ref=e10] [cursor=pointer]:
+          - /url: /tasks
+        - link "地点" [ref=e11] [cursor=pointer]:
+          - /url: /locations
+        - link "导入导出" [ref=e12] [cursor=pointer]:
+          - /url: /data
+  - main [ref=e13]:
+    - generic [ref=e14]: 任务已创建
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - heading "Deploy Firewall" [level=1] [ref=e18]
+          - generic [ref=e19]: Not Started
+          - generic [ref=e20]: High
+        - generic [ref=e21]:
+          - link "编辑" [ref=e22] [cursor=pointer]:
+            - /url: /tasks/1/edit
+            - img [ref=e23]
+            - text: 编辑
+          - button "删除" [ref=e26] [cursor=pointer]:
+            - img [ref=e27]
+            - text: 删除
+          - link "返回列表" [ref=e29] [cursor=pointer]:
+            - /url: /tasks/
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - strong [ref=e33]: "范围:"
+          - text: Country - China
+        - generic [ref=e34]:
+          - strong [ref=e35]: "执行模式:"
+          - text: "-"
+        - generic [ref=e36]:
+          - strong [ref=e37]: "分配地点:"
+          - text: 1 个
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - heading "基本信息" [level=2] [ref=e41]
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - term [ref=e44]: 任务来源
+                - definition [ref=e45]: "-"
+              - generic [ref=e46]:
+                - term [ref=e47]: 干系人
+                - definition [ref=e48]: "-"
+              - generic [ref=e49]:
+                - term [ref=e50]: 任务描述
+                - definition [ref=e51]: "-"
+              - generic [ref=e52]:
+                - term [ref=e53]: 任务负责人
+                - definition [ref=e54]: Wang Wu
+              - generic [ref=e55]:
+                - term [ref=e56]: 开始日期
+                - definition [ref=e57]: "-"
+              - generic [ref=e58]:
+                - term [ref=e59]: 目标日期
+                - definition [ref=e60]: "-"
+              - generic [ref=e61]:
+                - term [ref=e62]: 最后更新
+                - definition [ref=e63]: 2026-04-21
+          - generic [ref=e64]:
+            - heading "地点分配 (1 个地点)" [level=2] [ref=e65]
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - heading "Shanghai Plant" [level=3] [ref=e69]
+                - button "移除" [ref=e71] [cursor=pointer]
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - generic [ref=e74]: 本地状态
+                  - combobox [ref=e75]:
+                    - option "Pending" [selected]
+                    - option "In Progress"
+                    - option "Completed"
+                    - option "Blocked"
+                    - option "N/A"
+                - generic [ref=e76]:
+                  - generic [ref=e77]: IT 负责人
+                  - textbox [ref=e78]
+                - generic [ref=e79]:
+                  - generic [ref=e80]: 问题/阻塞
+                  - textbox [ref=e81]
+                - generic [ref=e82]:
+                  - generic [ref=e83]: 备注
+                  - textbox [ref=e84]
+                - button "更新" [ref=e86] [cursor=pointer]
+        - generic [ref=e88]:
+          - heading "进度汇总" [level=2] [ref=e89]
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - generic [ref=e92]: 总分配地点
+              - generic [ref=e93]: "1"
+            - generic [ref=e94]:
+              - generic [ref=e96]: Completed
+              - generic [ref=e97]: "0"
+            - generic [ref=e98]:
+              - generic [ref=e100]: In Progress
+              - generic [ref=e101]: "0"
+            - generic [ref=e102]:
+              - generic [ref=e104]: Pending
+              - generic [ref=e105]: "1"
+            - generic [ref=e106]:
+              - generic [ref=e108]: Blocked
+              - generic [ref=e109]: "0"
+            - generic [ref=e110]:
+              - generic [ref=e112]: N/A
+              - generic [ref=e113]: "0"
+            - generic [ref=e115]:
+              - generic [ref=e116]: 完成进度
+              - generic [ref=e117]: 0%

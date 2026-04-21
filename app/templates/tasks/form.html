@@ -1,66 +1,66 @@
 {% extends "base.html" %}
 
-{% block title %}{{ '编辑任务' if task else '新建任务' }} - APAC Task Manager{% endblock %}
+{% block title %}{{ 'Edit Task' if task else 'New Task' }} - APAC Task Manager{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
-    <!-- 页面头部 -->
+    <!-- Page Header -->
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">{{ '编辑任务' if task else '新建任务' }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ 'Edit Task' if task else 'New Task' }}</h1>
         {% if task %}
-        <a href="{{ url_for('tasks.detail', id=task.id) }}" class="text-sm text-gray-600 hover:text-gray-900">返回详情</a>
+        <a href="{{ url_for('tasks.detail', id=task.id) }}" class="text-sm text-gray-600 hover:text-gray-900">Back to Detail</a>
         {% else %}
-        <a href="{{ url_for('tasks.list') }}" class="text-sm text-gray-600 hover:text-gray-900">返回列表</a>
+        <a href="{{ url_for('tasks.list') }}" class="text-sm text-gray-600 hover:text-gray-900">Back to List</a>
         {% endif %}
     </div>
 
-    <!-- 表单 -->
+    <!-- Form -->
     <form method="post" class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-        <!-- 基本信息 -->
+        <!-- Basic Info -->
         <div class="mb-8">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">基本信息</h2>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Basic Info</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
                     <label for="task_name" class="block text-sm font-medium text-gray-700 mb-1">
-                        任务名称 <span class="text-red-500">*</span>
+                        Task Name <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="task_name" name="task_name" value="{{ task.task_name if task else '' }}" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
-                    <label for="task_source" class="block text-sm font-medium text-gray-700 mb-1">任务来源</label>
+                    <label for="task_source" class="block text-sm font-medium text-gray-700 mb-1">Source</label>
                     <input type="text" id="task_source" name="task_source" value="{{ task.task_source if task else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
-                    <label for="stakeholder" class="block text-sm font-medium text-gray-700 mb-1">干系人</label>
+                    <label for="stakeholder" class="block text-sm font-medium text-gray-700 mb-1">Stakeholder</label>
                     <input type="text" id="stakeholder" name="stakeholder" value="{{ task.stakeholder if task else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div class="md:col-span-2">
-                    <label for="task_description" class="block text-sm font-medium text-gray-700 mb-1">任务描述</label>
+                    <label for="task_description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea id="task_description" name="task_description" rows="3"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ task.task_description if task else '' }}</textarea>
                 </div>
                 <div>
-                    <label for="task_owner" class="block text-sm font-medium text-gray-700 mb-1">任务负责人</label>
+                    <label for="task_owner" class="block text-sm font-medium text-gray-700 mb-1">Owner</label>
                     <input type="text" id="task_owner" name="task_owner" value="{{ task.task_owner if task else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
-                    <label for="execution_model" class="block text-sm font-medium text-gray-700 mb-1">执行模式</label>
+                    <label for="execution_model" class="block text-sm font-medium text-gray-700 mb-1">Execution Model</label>
                     <input type="text" id="execution_model" name="execution_model" value="{{ task.execution_model if task else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
         </div>
 
-        <!-- 分配范围 -->
+        <!-- Assignment Scope -->
         <div class="mb-8">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">分配范围</h2>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Assignment Scope</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label for="scope_type" class="block text-sm font-medium text-gray-700 mb-1">范围类型</label>
+                    <label for="scope_type" class="block text-sm font-medium text-gray-700 mb-1">Scope Type</label>
                     <select id="scope_type" name="scope_type"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         {% for st in scope_types %}
@@ -69,33 +69,33 @@
                     </select>
                 </div>
                 <div>
-                    <label for="scope_rule" class="block text-sm font-medium text-gray-700 mb-1">范围规则</label>
+                    <label for="scope_rule" class="block text-sm font-medium text-gray-700 mb-1">Rule Description</label>
                     <input type="text" id="scope_rule" name="scope_rule" value="{{ task.scope_rule if task else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
-                    <label for="scope_detail" class="block text-sm font-medium text-gray-700 mb-1">范围详情</label>
+                    <label for="scope_detail" class="block text-sm font-medium text-gray-700 mb-1">Scope Detail</label>
                     <input type="text" id="scope_detail" name="scope_detail" value="{{ task.scope_detail if task else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
-            <!-- 范围预览 -->
+            <!-- Scope Preview -->
             <div id="scope-preview" class="mt-4 hidden">
                 <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
                     <p class="text-sm font-medium text-blue-800">
-                        匹配地点: <span id="scope-count">0</span> 个
+                        Matching locations: <span id="scope-count">0</span>
                     </p>
                     <p id="scope-names" class="text-sm text-blue-700 mt-1"></p>
                 </div>
             </div>
         </div>
 
-        <!-- 状态与日期 -->
+        <!-- Status & Dates -->
         <div class="mb-8">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">状态与日期</h2>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Status & Dates</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
-                    <label for="overall_status" class="block text-sm font-medium text-gray-700 mb-1">整体状态</label>
+                    <label for="overall_status" class="block text-sm font-medium text-gray-700 mb-1">Overall Status</label>
                     <select id="overall_status" name="overall_status"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         {% for s in status_options %}
@@ -104,7 +104,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="task_priority" class="block text-sm font-medium text-gray-700 mb-1">优先级</label>
+                    <label for="task_priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                     <select id="task_priority" name="task_priority"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         {% for p in priority_options %}
@@ -113,50 +113,50 @@
                     </select>
                 </div>
                 <div>
-                    <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">开始日期</label>
+                    <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                     <input type="date" id="start_date" name="start_date" value="{{ task.start_date.strftime('%Y-%m-%d') if task and task.start_date else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
-                    <label for="target_date" class="block text-sm font-medium text-gray-700 mb-1">目标日期</label>
+                    <label for="target_date" class="block text-sm font-medium text-gray-700 mb-1">Target Date</label>
                     <input type="date" id="target_date" name="target_date" value="{{ task.target_date.strftime('%Y-%m-%d') if task and task.target_date else '' }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
         </div>
 
-        <!-- 链接与备注 -->
+        <!-- Links & Comments -->
         <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">链接与备注</h2>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Links & Comments</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="link_to_file" class="block text-sm font-medium text-gray-700 mb-1">文件链接</label>
+                    <label for="link_to_file" class="block text-sm font-medium text-gray-700 mb-1">File Link</label>
                     <input type="url" id="link_to_file" name="link_to_file" value="{{ task.link_to_file if task else '' }}"
                         placeholder="https://..."
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
-                    <label for="link_to_mail" class="block text-sm font-medium text-gray-700 mb-1">邮件链接</label>
+                    <label for="link_to_mail" class="block text-sm font-medium text-gray-700 mb-1">Email Link</label>
                     <input type="url" id="link_to_mail" name="link_to_mail" value="{{ task.link_to_mail if task else '' }}"
                         placeholder="https://..."
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div class="md:col-span-2">
-                    <label for="comments" class="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                    <label for="comments" class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
                     <textarea id="comments" name="comments" rows="3"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ task.comments if task else '' }}</textarea>
                 </div>
             </div>
         </div>
 
-        <!-- 操作按钮 -->
+        <!-- Action Buttons -->
         <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
             {% if task %}
-            <a href="{{ url_for('tasks.detail', id=task.id) }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">取消</a>
+            <a href="{{ url_for('tasks.detail', id=task.id) }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Cancel</a>
             {% else %}
-            <a href="{{ url_for('tasks.list') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">取消</a>
+            <a href="{{ url_for('tasks.list') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Cancel</a>
             {% endif %}
-            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">保存</button>
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Save</button>
         </div>
     </form>
 </div>
@@ -164,7 +164,7 @@
 
 {% block extra_js %}
 <script>
-    // 范围预览功能
+    // Scope preview function
     const scopeTypeEl = document.getElementById('scope_type');
     const scopeDetailEl = document.getElementById('scope_detail');
 
@@ -192,7 +192,7 @@
             if (names.length > 0) {
                 document.getElementById('scope-names').textContent = names.slice(0, 20).join(', ') + (names.length > 20 ? ' ...' : '');
             } else {
-                document.getElementById('scope-names').textContent = '无匹配地点';
+                document.getElementById('scope-names').textContent = 'No matching locations';
             }
             document.getElementById('scope-preview').classList.remove('hidden');
         })

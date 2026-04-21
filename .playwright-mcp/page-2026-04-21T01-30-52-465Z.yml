@@ -1,0 +1,56 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e5]:
+      - link "APAC Task Manager" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e8]:
+        - link "仪表盘" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "任务" [ref=e10] [cursor=pointer]:
+          - /url: /tasks
+        - link "地点" [ref=e11] [cursor=pointer]:
+          - /url: /locations
+        - link "导入导出" [ref=e12] [cursor=pointer]:
+          - /url: /data
+  - main [ref=e13]:
+    - generic [ref=e14]: 地点已创建
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - heading "地点管理" [level=1] [ref=e17]
+        - link "新建地点" [ref=e18] [cursor=pointer]:
+          - /url: /locations/new
+          - img [ref=e19]
+          - text: 新建地点
+      - generic [ref=e21]:
+        - textbox "搜索地点名称/国家/城市..." [ref=e23]
+        - combobox [ref=e25]:
+          - option "全部状态" [selected]
+          - option "激活"
+          - option "停用"
+        - button "搜索" [ref=e26] [cursor=pointer]
+        - link "重置" [ref=e27] [cursor=pointer]:
+          - /url: /locations/
+      - table [ref=e29]:
+        - rowgroup [ref=e30]:
+          - row "地点名称 国家 城市 类型 区域 状态 操作" [ref=e31]:
+            - columnheader "地点名称" [ref=e32]
+            - columnheader "国家" [ref=e33]
+            - columnheader "城市" [ref=e34]
+            - columnheader "类型" [ref=e35]
+            - columnheader "区域" [ref=e36]
+            - columnheader "状态" [ref=e37]
+            - columnheader "操作" [ref=e38]
+        - rowgroup [ref=e39]:
+          - row "Shanghai Plant China Shanghai Plant APAC-North 激活 编辑 停用 删除" [ref=e40]:
+            - cell "Shanghai Plant" [ref=e41]
+            - cell "China" [ref=e42]
+            - cell "Shanghai" [ref=e43]
+            - cell "Plant" [ref=e44]
+            - cell "APAC-North" [ref=e45]
+            - cell "激活" [ref=e46]:
+              - generic [ref=e47]: 激活
+            - cell "编辑 停用 删除" [ref=e48]:
+              - link "编辑" [ref=e49] [cursor=pointer]:
+                - /url: /locations/1/edit
+              - button "停用" [ref=e51] [cursor=pointer]
+              - button "删除" [ref=e53] [cursor=pointer]

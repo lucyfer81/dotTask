@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="space-y-6">
-    <!-- 页面头部 -->
+    <!-- Page Header -->
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <h1 class="text-2xl font-bold text-gray-900">{{ task.task_name }}</h1>
@@ -16,91 +16,91 @@
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                 </svg>
-                编辑
+                Edit
             </a>
-            <form method="post" action="{{ url_for('tasks.delete', id=task.id) }}" class="inline" onsubmit="return confirm('确定要删除任务「{{ task.task_name }}」吗？此操作不可撤销。')">
+            <form method="post" action="{{ url_for('tasks.delete', id=task.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete task &quot;{{ task.task_name }}&quot;? This action cannot be undone.')">
                 <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
-                    删除
+                    Delete
                 </button>
             </form>
-            <a href="{{ url_for('tasks.list') }}" class="inline-flex items-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50">返回列表</a>
+            <a href="{{ url_for('tasks.list') }}" class="inline-flex items-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50">Back to List</a>
         </div>
     </div>
 
-    <!-- 范围信息 -->
+    <!-- Scope Info -->
     <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-4">
         <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-            <span><strong>范围:</strong> {{ task.scope_type }}{% if task.scope_detail %} - {{ task.scope_detail }}{% endif %}</span>
-            <span><strong>执行模式:</strong> {{ task.execution_model or '-' }}</span>
-            <span><strong>分配地点:</strong> {{ assignments | length }} 个</span>
+            <span><strong>Scope:</strong> {{ task.scope_type }}{% if task.scope_detail %} - {{ task.scope_detail }}{% endif %}</span>
+            <span><strong>Execution Model:</strong> {{ task.execution_model or '-' }}</span>
+            <span><strong>Assigned Locations:</strong> {{ assignments | length }}</span>
         </div>
     </div>
 
-    <!-- 主内容：两栏布局 -->
+    <!-- Main Content: Two-column Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- 左侧：基本信息 + 分配列表 -->
+        <!-- Left: Basic Info + Assignment List -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- 基本信息 -->
+            <!-- Basic Info -->
             <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">基本信息</h2>
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Basic Info</h2>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">任务来源</dt>
+                        <dt class="text-sm font-medium text-gray-500">Source</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.task_source or '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">干系人</dt>
+                        <dt class="text-sm font-medium text-gray-500">Stakeholder</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.stakeholder or '-' }}</dd>
                     </div>
                     <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-gray-500">任务描述</dt>
+                        <dt class="text-sm font-medium text-gray-500">Description</dt>
                         <dd class="text-sm text-gray-900 mt-1 whitespace-pre-wrap">{{ task.task_description or '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">任务负责人</dt>
+                        <dt class="text-sm font-medium text-gray-500">Owner</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.task_owner or '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">开始日期</dt>
+                        <dt class="text-sm font-medium text-gray-500">Start Date</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.start_date.strftime('%Y-%m-%d') if task.start_date else '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">目标日期</dt>
+                        <dt class="text-sm font-medium text-gray-500">Target Date</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.target_date.strftime('%Y-%m-%d') if task.target_date else '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">最后更新</dt>
+                        <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                         <dd class="text-sm text-gray-900 mt-1">{{ task.last_update.strftime('%Y-%m-%d') if task.last_update else '-' }}</dd>
                     </div>
                     {% if task.link_to_file %}
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">文件链接</dt>
+                        <dt class="text-sm font-medium text-gray-500">File Link</dt>
                         <dd class="text-sm mt-1"><a href="{{ task.link_to_file }}" target="_blank" class="text-blue-600 hover:text-blue-800">{{ task.link_to_file }}</a></dd>
                     </div>
                     {% endif %}
                     {% if task.link_to_mail %}
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">邮件链接</dt>
+                        <dt class="text-sm font-medium text-gray-500">Email Link</dt>
                         <dd class="text-sm mt-1"><a href="{{ task.link_to_mail }}" target="_blank" class="text-blue-600 hover:text-blue-800">{{ task.link_to_mail }}</a></dd>
                     </div>
                     {% endif %}
                     {% if task.comments %}
                     <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-gray-500">备注</dt>
+                        <dt class="text-sm font-medium text-gray-500">Comments</dt>
                         <dd class="text-sm text-gray-900 mt-1 whitespace-pre-wrap">{{ task.comments }}</dd>
                     </div>
                     {% endif %}
                 </dl>
             </div>
 
-            <!-- 地点分配列表 -->
+            <!-- Location Assignments -->
             <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
-                    地点分配
-                    <span class="text-sm font-normal text-gray-500">({{ assignments | length }} 个地点)</span>
+                    Location Assignments
+                    <span class="text-sm font-normal text-gray-500">({{ assignments | length }} locations)</span>
                 </h2>
 
                 {% if assignments %}
@@ -109,13 +109,13 @@
                     <div class="border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm font-semibold text-gray-800">{{ assignment.location.location_name }}</h3>
-                            <form method="post" action="{{ url_for('tasks.remove_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="inline" onsubmit="return confirm('确定要移除此地点分配吗？')">
-                                <button type="submit" class="text-xs text-red-600 hover:text-red-800">移除</button>
+                            <form method="post" action="{{ url_for('tasks.remove_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to remove this assignment?')">
+                                <button type="submit" class="text-xs text-red-600 hover:text-red-800">Remove</button>
                             </form>
                         </div>
                         <form method="post" action="{{ url_for('tasks.update_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">本地状态</label>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Local Status</label>
                                 <select name="local_status" class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                                     {% for ls in local_status_options %}
                                     <option value="{{ ls }}" {% if assignment.local_status == ls %}selected{% endif %}>{{ ls }}</option>
@@ -123,65 +123,65 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">IT 负责人</label>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">IT Person</label>
                                 <input type="text" name="it_name" value="{{ assignment.it_name or '' }}"
                                     class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 mb-1">问题/阻塞</label>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Issue / Blocker</label>
                                 <input type="text" name="issue_blocker" value="{{ assignment.issue_blocker or '' }}"
                                     class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 mb-1">备注</label>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Comments</label>
                                 <input type="text" name="comments" value="{{ assignment.comments or '' }}"
                                     class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="sm:col-span-2 flex justify-end">
-                                <button type="submit" class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700">更新</button>
+                                <button type="submit" class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700">Update</button>
                             </div>
                         </form>
                     </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-sm text-gray-500 py-4">暂无地点分配</p>
+                <p class="text-sm text-gray-500 py-4">No assignments yet.</p>
                 {% endif %}
 
-                <!-- 添加地点 -->
+                <!-- Add Location -->
                 {% if unassigned_locations %}
                 <div class="mt-4 pt-4 border-t border-gray-200">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">添加地点</h3>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Add Location</h3>
                     <form method="post" action="{{ url_for('tasks.assign_location', id=task.id) }}" class="flex flex-wrap items-end gap-3">
                         <div class="flex-1 min-w-[200px]">
-                            <label class="block text-xs font-medium text-gray-500 mb-1">选择地点</label>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Select Location</label>
                             <select name="location_id" required class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                <option value="">-- 选择地点 --</option>
+                                <option value="">-- Select Location --</option>
                                 {% for loc in unassigned_locations %}
                                 <option value="{{ loc.id }}">{{ loc.location_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">IT 负责人</label>
-                            <input type="text" name="it_name" value="" placeholder="可选"
+                            <label class="block text-xs font-medium text-gray-500 mb-1">IT Person</label>
+                            <input type="text" name="it_name" value="" placeholder="Optional"
                                 class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                         </div>
-                        <button type="submit" class="px-3 py-1 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700">分配</button>
+                        <button type="submit" class="px-3 py-1 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700">Assign</button>
                     </form>
                 </div>
                 {% endif %}
             </div>
         </div>
 
-        <!-- 右侧：进度汇总 -->
+        <!-- Right: Progress Summary -->
         <div class="space-y-6">
             <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">进度汇总</h2>
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Progress Summary</h2>
 
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">总分配地点</span>
+                        <span class="text-sm text-gray-600">Total Assignments</span>
                         <span class="text-sm font-semibold text-gray-900">{{ assignments | length }}</span>
                     </div>
 
@@ -226,12 +226,12 @@
                         <span class="text-sm font-semibold text-gray-900">{{ ns.na }}</span>
                     </div>
 
-                    <!-- 进度条 -->
+                    <!-- Progress Bar -->
                     {% if assignments | length > 0 %}
                     {% set pct = (ns.completed / (assignments | length) * 100) | int %}
                     <div class="mt-4">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-xs font-medium text-gray-600">完成进度</span>
+                            <span class="text-xs font-medium text-gray-600">Progress</span>
                             <span class="text-xs font-medium text-gray-600">{{ pct }}%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
@@ -242,14 +242,14 @@
                 </div>
             </div>
 
-            <!-- 阻塞告警 -->
+            <!-- Blocker Alert -->
             {% if ns.blocked > 0 %}
             <div class="bg-red-50 border border-red-200 rounded-lg p-4">
                 <h3 class="text-sm font-semibold text-red-800 mb-2">
                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                     </svg>
-                    {{ ns.blocked }} 个地点被阻塞
+                    {{ ns.blocked }} location(s) blocked
                 </h3>
                 <ul class="text-sm text-red-700 space-y-1">
                     {% for a in assignments %}

@@ -1,36 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}仪表盘 - APAC Infra Task Manager{% endblock %}
+{% block title %}Dashboard - APAC Infra Task Manager{% endblock %}
 
 {% block content %}
 <!-- Header -->
 <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">仪表盘</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
     <button onclick="exportPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
-        导出 PDF 报告
+        Export PDF Report
     </button>
 </div>
 
 <!-- Stats Cards -->
 <div id="stats-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
     <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
-        <div class="text-sm font-medium text-gray-500">总任务</div>
+        <div class="text-sm font-medium text-gray-500">Total Tasks</div>
         <div class="text-3xl font-bold text-gray-800 mt-1">{{ total_tasks }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
-        <div class="text-sm font-medium text-gray-500">进行中</div>
+        <div class="text-sm font-medium text-gray-500">In Progress</div>
         <div class="text-3xl font-bold text-yellow-600 mt-1">{{ in_progress }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
-        <div class="text-sm font-medium text-gray-500">已完成</div>
+        <div class="text-sm font-medium text-gray-500">Completed</div>
         <div class="text-3xl font-bold text-green-600 mt-1">{{ completed }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500">
-        <div class="text-sm font-medium text-gray-500">逾期</div>
+        <div class="text-sm font-medium text-gray-500">Overdue</div>
         <div class="text-3xl font-bold text-red-600 mt-1">{{ overdue }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-5 border-l-4 border-orange-500">
-        <div class="text-sm font-medium text-gray-500">有阻塞</div>
+        <div class="text-sm font-medium text-gray-500">Blocked</div>
         <div class="text-3xl font-bold text-orange-600 mt-1">{{ blocked }}</div>
     </div>
 </div>
@@ -40,20 +40,20 @@
     <!-- Row 1: 2 charts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4">状态分布</h2>
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Task Status Distribution</h2>
             <div class="flex justify-center">
                 <canvas id="statusChart" width="350" height="300"></canvas>
             </div>
         </div>
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4">优先级分布</h2>
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Priority Distribution</h2>
             <canvas id="priorityChart" height="300"></canvas>
         </div>
     </div>
 
     <!-- Row 2: Full-width chart -->
     <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">各地点完成进度</h2>
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Progress by Location</h2>
         <canvas id="locationChart" height="200"></canvas>
     </div>
 </div>
@@ -66,7 +66,7 @@
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
             </svg>
-            逾期任务
+            Overdue Tasks
         </h2>
         {% if overdue_tasks %}
         <div class="space-y-3">
@@ -74,7 +74,7 @@
             <div class="border border-red-200 rounded-md p-3 bg-red-50">
                 <div class="flex justify-between items-start">
                     <a href="/tasks/{{ task.id }}" class="text-sm font-medium text-gray-800 hover:text-blue-600">{{ task.task_name }}</a>
-                    <span class="text-xs text-red-600 font-medium whitespace-nowrap ml-2">目标: {{ task.target_date }}</span>
+                    <span class="text-xs text-red-600 font-medium whitespace-nowrap ml-2">Target: {{ task.target_date }}</span>
                 </div>
                 <div class="flex gap-2 mt-1">
                     <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">{{ task.overall_status }}</span>
@@ -84,7 +84,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-gray-500 text-sm">暂无逾期任务</p>
+        <p class="text-gray-500 text-sm">No overdue tasks</p>
         {% endif %}
     </div>
 
@@ -94,7 +94,7 @@
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
             </svg>
-            即将到期（一周内）
+            Due Soon (within 7 days)
         </h2>
         {% if upcoming_tasks %}
         <div class="space-y-3">
@@ -102,7 +102,7 @@
             <div class="border border-amber-200 rounded-md p-3 bg-amber-50">
                 <div class="flex justify-between items-start">
                     <a href="/tasks/{{ task.id }}" class="text-sm font-medium text-gray-800 hover:text-blue-600">{{ task.task_name }}</a>
-                    <span class="text-xs text-amber-600 font-medium whitespace-nowrap ml-2">目标: {{ task.target_date }}</span>
+                    <span class="text-xs text-amber-600 font-medium whitespace-nowrap ml-2">Target: {{ task.target_date }}</span>
                 </div>
                 <div class="flex gap-2 mt-1">
                     <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">{{ task.overall_status }}</span>
@@ -112,7 +112,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-gray-500 text-sm">暂无即将到期的任务</p>
+        <p class="text-gray-500 text-sm">No tasks due soon</p>
         {% endif %}
     </div>
 </div>
@@ -176,7 +176,7 @@
         data: {
             labels: prioLabels,
             datasets: [{
-                label: '任务数',
+                label: 'Task Count',
                 data: prioValues,
                 backgroundColor: pColors,
                 borderRadius: 4
@@ -205,13 +205,13 @@
             labels: locNames,
             datasets: [
                 {
-                    label: '已完成',
+                    label: 'Completed',
                     data: locDone,
                     backgroundColor: '#22c55e',
                     borderRadius: 2
                 },
                 {
-                    label: '剩余',
+                    label: 'Remaining',
                     data: locRemaining,
                     backgroundColor: '#e5e7eb',
                     borderRadius: 2

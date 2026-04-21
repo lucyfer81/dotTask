@@ -30,16 +30,16 @@ def export_excel():
 def import_excel():
     file = request.files.get("file")
     if not file or not file.filename.endswith((".xlsx", ".xls")):
-        flash("请上传 .xlsx 文件", "error")
+        flash("Please upload a .xlsx file", "error")
         return redirect(url_for("data_io.index"))
 
     sheet = request.form.get("sheet")
     try:
         wb = load_workbook(file)
         stats = import_from_workbook(wb, sheet if sheet else None)
-        parts = [f"{k}: {v} 条" for k, v in stats.items()]
-        flash(f"导入成功 — {', '.join(parts)}", "success")
+        parts = [f"{k}: {v} records" for k, v in stats.items()]
+        flash(f"Import successful — {', '.join(parts)}", "success")
     except Exception as e:
-        flash(f"导入失败: {e}", "error")
+        flash(f"Import failed: {e}", "error")
 
     return redirect(url_for("data_io.index"))

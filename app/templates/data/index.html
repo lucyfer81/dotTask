@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}导入导出 - APAC Task Manager{% endblock %}
+{% block title %}Import/Export - APAC Task Manager{% endblock %}
 
 {% block content %}
 <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">数据导入导出</h1>
-    <p class="mt-1 text-sm text-gray-500">通过 Excel 文件批量管理任务与地点数据</p>
+    <h1 class="text-2xl font-bold text-gray-900">Data Import / Export</h1>
+    <p class="mt-1 text-sm text-gray-500">Batch manage tasks and locations via Excel files</p>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- 导出卡片 -->
+    <!-- Export Card -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex items-center mb-4">
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
@@ -17,22 +17,22 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900">导出数据</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Export Data</h2>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-            将当前所有任务、地点和分配数据导出为 Excel 文件。工作簿包含三个工作表：
-            <strong>Task_Master</strong>、<strong>Location_Master</strong> 和 <strong>Task_Assignment</strong>。
+            Export all current tasks, locations, and assignment data as an Excel file. The workbook contains three sheets:
+            <strong>Task_Master</strong>, <strong>Location_Master</strong>, and <strong>Task_Assignment</strong>.
         </p>
         <a href="{{ url_for('data_io.export_excel') }}"
            class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
             </svg>
-            导出 Excel
+            Export Excel
         </a>
     </div>
 
-    <!-- 导入卡片 -->
+    <!-- Import Card -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex items-center mb-4">
             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
@@ -40,25 +40,25 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900">导入数据</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Import Data</h2>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-            上传 Excel 文件导入数据。可选择导入特定工作表或全部工作表。
+            Upload an Excel file to import data. You can choose to import specific sheets or all sheets.
         </p>
         <form action="{{ url_for('data_io.import_excel') }}" method="post" enctype="multipart/form-data">
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">选择文件</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Choose File</label>
                     <input type="file" name="file" accept=".xlsx,.xls"
                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">导入范围</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Import Scope</label>
                     <select name="sheet"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
-                        <option value="">全部工作表</option>
-                        <option value="Location_Master">仅 Location_Master</option>
-                        <option value="Task_Master">仅 Task_Master</option>
+                        <option value="">All Sheets</option>
+                        <option value="Location_Master">Location_Master Only</option>
+                        <option value="Task_Master">Task_Master Only</option>
                     </select>
                 </div>
                 <button type="submit"
@@ -66,7 +66,7 @@
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                     </svg>
-                    导入
+                    Import
                 </button>
             </div>
         </form>
@@ -79,7 +79,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         <p class="text-sm text-yellow-800">
-            <strong>注意：</strong>导入会新增数据（不会覆盖已有数据）。如需更新已有记录，请先在系统中手动编辑或删除旧数据。
+            <strong>Note:</strong> Import adds new records (does not overwrite existing data). To update existing records, please edit or delete the old data in the system first.
         </p>
     </div>
 </div>
