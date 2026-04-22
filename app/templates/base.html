@@ -27,20 +27,20 @@ tailwind.config = {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 dark:bg-cc-bg min-h-screen text-gray-900 dark:text-gray-200 transition-colors duration-300">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-white dark:bg-cc-card shadow-sm border-b border-gray-200 dark:border-cc-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="text-xl font-bold text-gray-800">APAC Task Manager</a>
+                        <a href="/" class="text-xl font-bold text-gray-800 dark:text-gray-100">APAC Task Manager</a>
                     </div>
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-4">
-                        <a href="/" class="nav-link {% if request.path == '/' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Dashboard</a>
-                        <a href="/tasks" class="nav-link {% if '/task' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Tasks</a>
-                        <a href="/locations" class="nav-link {% if '/location' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Locations</a>
-                        <a href="/data" class="nav-link {% if '/data' in request.path %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600">Import / Export</a>
+                        <a href="/" class="nav-link {% if request.path == '/' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-400{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Dashboard</a>
+                        <a href="/tasks" class="nav-link {% if '/task' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-400{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Tasks</a>
+                        <a href="/locations" class="nav-link {% if '/location' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-400{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Locations</a>
+                        <a href="/data" class="nav-link {% if '/data' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-400{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Import / Export</a>
                     </div>
                 </div>
                 <div class="flex items-center">
@@ -62,7 +62,7 @@ tailwind.config = {
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-        <div class="mb-4 p-4 rounded-md {{ 'bg-green-50 text-green-800' if category == 'success' else 'bg-red-50 text-red-800' if category == 'error' else 'bg-blue-50 text-blue-800' }}">
+        <div class="mb-4 p-4 rounded-md {{ 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' if category == 'success' else 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300' if category == 'error' else 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' }}">
             {{ message }}
         </div>
         {% endfor %}
