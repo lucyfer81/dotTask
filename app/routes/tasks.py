@@ -147,6 +147,10 @@ def update_status(id):
         task.overall_status = new_status
         task.last_update = date.today()
         db.session.commit()
+
+    if request.headers.get("HX-Request"):
+        return render_template("tasks/partials/status_menu.html", task=task, status_options=get_options("statuses"))
+
     return redirect(request.headers.get("Referer", url_for("tasks.list")))
 
 
@@ -213,6 +217,13 @@ def _parse_date(value):
         except ValueError:
             return None
     return None
+
+
+@bp.route("/<int:id>/status-menu")
+def status_menu(id):
+    """Return status popup menu fragment for HTMX."""
+    task = Task.query.get_or_404(id)
+    return render_template("tasks/partials/status_menu.html", task=task, status_options=get_options("statuses"))
 
 
 @bp.route("/<int:id>/edit-field")

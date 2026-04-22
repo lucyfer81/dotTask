@@ -1,0 +1,20 @@
+<div class="relative inline-block" onclick="event.stopPropagation()">
+    <span class="badge badge-{{ task.overall_status | lower | replace(' ', '-') }} cursor-pointer"
+          hx-get="{{ url_for('tasks.status_menu', id=task.id) }}"
+          hx-target="closest .relative"
+          hx-swap="outerHTML">
+        {{ task.overall_status }}
+    </span>
+    <div class="absolute z-10 mt-1 left-0 bg-white dark:bg-cc-card border border-gray-200 dark:border-cc-border rounded-md shadow-lg py-1 min-w-[140px]">
+        {% for s in status_options %}
+        <button class="w-full text-left px-3 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 {{ 'font-bold' if s == task.overall_status else '' }} {{ 'text-gray-900 dark:text-gray-100' if s == task.overall_status else 'text-gray-700 dark:text-gray-300' }}"
+                hx-post="{{ url_for('tasks.update_status', id=task.id) }}"
+                hx-vals='{"overall_status": "{{ s }}"}'
+                hx-target="closest .relative"
+                hx-swap="outerHTML">
+            <span class="badge badge-{{ s | lower | replace(' ', '-') }} mr-1"></span>
+            {{ s }}
+        </button>
+        {% endfor %}
+    </div>
+</div>

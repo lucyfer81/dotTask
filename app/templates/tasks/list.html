@@ -73,13 +73,7 @@
                         <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
                     </td>
                     <td class="px-4 py-3 text-sm">
-                        <form method="post" action="{{ url_for('tasks.update_status', id=task.id) }}" class="inline">
-                            <select name="overall_status" onchange="this.form.submit()" class="text-xs border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
-                                {% for s in status_options %}
-                                <option value="{{ s }}" {% if task.overall_status == s %}selected{% endif %}>{{ s }}</option>
-                                {% endfor %}
-                            </select>
-                        </form>
+                        {% include "tasks/partials/status_menu.html" %}
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ task.task_owner or '-' }}</td>
                     <td class="px-4 py-3 text-sm">
