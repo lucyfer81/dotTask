@@ -28,6 +28,7 @@ tailwind.config = {
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body class="bg-gray-50 dark:bg-cc-bg min-h-screen text-gray-900 dark:text-gray-200 transition-colors duration-300">
+<div id="toast-container"></div>
     <!-- Navigation -->
     <nav class="bg-white dark:bg-cc-card shadow-sm border-b border-gray-200 dark:border-cc-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,6 +74,9 @@ tailwind.config = {
     </main>
 
     {% block extra_js %}{% endblock %}
+<!-- Drawer Panel -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer-panel" class="bg-white dark:bg-cc-card shadow-2xl"></div>
 <script>
 // Theme toggle
 (function() {
@@ -101,6 +105,35 @@ tailwind.config = {
         setTheme(!html.classList.contains('dark'));
     });
 })();
+</script>
+<script>
+// Drawer
+function openDrawer(url) {
+    var overlay = document.getElementById('drawer-overlay');
+    var panel = document.getElementById('drawer-panel');
+    panel.innerHTML = '<div class="p-8 text-center text-gray-500 dark:text-gray-400">Loading...</div>';
+    overlay.classList.add('active');
+    panel.classList.add('active');
+    htmx.ajax('GET', url, '#drawer-panel');
+}
+function closeDrawer() {
+    document.getElementById('drawer-overlay').classList.remove('active');
+    document.getElementById('drawer-panel').classList.remove('active');
+}
+
+// Toast
+function showToast(message, type) {
+    type = type || 'info';
+    var container = document.getElementById('toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(function() {
+        toast.classList.add('toast-exit');
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+}
 </script>
 </body>
 </html>
