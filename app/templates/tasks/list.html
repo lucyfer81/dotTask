@@ -68,6 +68,15 @@
                            onclick="event.preventDefault(); openDrawer('{{ url_for('tasks.drawer', id=task.id) }}')">
                             {{ task.task_name }}
                         </a>
+                        {% set task_assignments = task.assignments.all() %}
+                        {% if task_assignments %}
+                        <div class="mt-1 flex flex-wrap gap-0.5">
+                            {% for a in task_assignments %}
+                            <span class="progress-dot progress-dot-{{ (a.local_status or 'pending') | lower | replace(' ', '-') | replace('/', '') }}"
+                                  title="{{ a.location.location_name }}"></span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </td>
                     <td class="px-4 py-3 text-sm">
                         <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
