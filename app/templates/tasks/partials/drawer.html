@@ -1,0 +1,78 @@
+<div class="p-6 space-y-6">
+    <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-cc-border">
+        <div>
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ task.task_name }}</h2>
+            <div class="flex gap-2 mt-1">
+                <span class="badge badge-{{ task.overall_status | lower | replace(' ', '-') }}">{{ task.overall_status }}</span>
+                <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ url_for('tasks.detail', id=task.id) }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline" target="_blank">Open full page</a>
+            <button onclick="closeDrawer()" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3 text-sm">
+        <div>
+            <span class="text-gray-500 dark:text-gray-400">Owner:</span>
+            <span class="ml-1 text-gray-900 dark:text-gray-200 font-mono">{{ task.task_owner or '-' }}</span>
+        </div>
+        <div>
+            <span class="text-gray-500 dark:text-gray-400">Target:</span>
+            <span class="ml-1 text-gray-900 dark:text-gray-200 font-mono">{{ task.target_date.strftime('%Y-%m-%d') if task.target_date else '-' }}</span>
+        </div>
+        <div>
+            <span class="text-gray-500 dark:text-gray-400">Scope:</span>
+            <span class="ml-1 text-gray-900 dark:text-gray-200">{{ task.scope_country or 'All' }} / {{ task.scope_location_type or 'All' }}</span>
+        </div>
+        <div>
+            <span class="text-gray-500 dark:text-gray-400">Execution:</span>
+            <span class="ml-1 text-gray-900 dark:text-gray-200">{{ task.execution_model or '-' }}</span>
+        </div>
+    </div>
+    {% set ns = namespace(completed=0, in_progress=0, pending=0, blocked=0, na=0) %}
+    {% for a in assignments %}
+        {% if a.local_status == 'Completed' %}{% set ns.completed = ns.completed + 1 %}
+        {% elif a.local_status == 'In Progress' %}{% set ns.in_progress = ns.in_progress + 1 %}
+        {% elif a.local_status == 'Pending' %}{% set ns.pending = ns.pending + 1 %}
+        {% elif a.local_status == 'Blocked' %}{% set ns.blocked = ns.blocked + 1 %}
+        {% elif a.local_status == 'N/A' %}{% set ns.na = ns.na + 1 %}
+        {% endif %}
+    {% endfor %}
+    {% if assignments | length > 0 %}
+    {% set pct = (ns.completed / (assignments | length) * 100) | int %}
+    <div>
+        <div class="flex justify-between text-xs mb-1">
+            <span class="text-gray-600 dark:text-gray-400">Progress {{ pct }}%</span>
+            <span class="text-gray-500 dark:text-gray-500">{{ ns.completed }}/{{ assignments | length }} done</span>
+        </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+        </div>
+    </div>
+    {% endif %}
+    <div>
+        <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Locations ({{ assignments | length }})</h3>
+        {% if assignments %}
+        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
+            {% for a in assignments %}
+            <div class="border border-gray-200 dark:border-cc-border rounded-lg p-3">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ a.location.location_name }}</span>
+                    <span class="badge badge-{{ (a.local_status or 'pending') | lower | replace(' ', '-') }}">{{ a.local_status or 'Pending' }}</span>
+                </div>
+                {% if a.it_name %}
+                <span class="text-xs text-gray-500 dark:text-gray-400">{{ a.it_name }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-500 dark:text-gray-400">No assignments.</p>
+        {% endif %}
+    </div>
+</div>

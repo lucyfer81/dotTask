@@ -1,0 +1,14 @@
+<form hx-post="{{ url_for('tasks.save_field', id=task.id) }}"
+      hx-target="closest [data-field-container]"
+      hx-swap="outerHTML"
+      class="inline">
+    <input type="hidden" name="field" value="{{ field }}">
+    <textarea name="value" rows="4"
+              class="w-full text-sm border border-blue-400 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200 dark:border-blue-600"
+              autofocus>{{ value }}</textarea>
+    <div class="flex gap-2 mt-1">
+        <button type="submit" class="px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700">Save</button>
+        <button type="button" class="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200"
+                onclick="htmx.ajax('GET', '{{ url_for('tasks.detail', id=task.id) }}', {target: this.closest('[data-field-container]'), swap: 'outerHTML'})">Cancel</button>
+    </div>
+</form>

@@ -215,6 +215,44 @@ def _parse_date(value):
     return None
 
 
+@bp.route("/<int:id>/edit-field")
+def edit_field(id):
+    """Return inline edit form fragment for HTMX."""
+    task = Task.query.get_or_404(id)
+    field = request.args.get("field")
+    allowed = {"task_description", "comments"}
+    if field not in allowed:
+        return "", 400
+    value = getattr(task, field) or ""
+    return render_template("tasks/partials/edit_field.html", task=task, field=field, value=value)
+
+
+@bp.route("/<int:id>/save-field", methods=["POST"])
+def save_field(id):
+    """Save inline edit and return display fragment for HTMX."""
+    task = Task.query.get_or_404(id)
+    field = request.form.get("field")
+    allowed = {"task_description", "comments"}
+    if field not in allowed:
+        return "", 400
+    setattr(task, field, request.form.get("value", ""))
+    task.last_update = date.today()
+    db.session.commit()
+    return render_template("tasks/partials/display_field.html", task=task, field=field)
+
+
+@bp.route("/<int:id>/drawer")
+def drawer(id):
+    """Return drawer content fragment for HTMX slide-over panel."""
+    task = Task.query.get_or_404(id)
+    assignments = task.assignments.order_by(TaskAssignment.id).all()
+    return render_template(
+        "tasks/partials/drawer.html", task=task, assignments=assignments,
+        status_options=get_options("statuses"),
+        local_status_options=get_options("local_statuses"),
+    )
+
+
 def _parse_links(json_str):
     """Parse JSON links string into list of {"name": ..., "url": ...} dicts.
     Filter out entries with empty url."""
