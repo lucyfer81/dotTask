@@ -205,6 +205,16 @@
 
     function addMailLinkRow(name = '', url = '') {
         document.getElementById('mail-links-container').insertAdjacentHTML('beforeend', MAIL_ROW_HTML(escapeHtml(name), escapeHtml(url)));
+        const container = document.getElementById('mail-links-container');
+        const lastRow = container.lastElementChild;
+        const urlInput = lastRow.querySelector('.link-url');
+        urlInput.addEventListener('paste', function(e) {
+            setTimeout(() => {
+                const val = this.value;
+                const m = val.match(/^(https:\/\/outlook\.office\.com\/mail\/)inbox\/id\/(.+)$/);
+                if (m) this.value = m[1] + 'deeplink/read/' + m[2];
+            }, 0);
+        });
     }
 
     function addFileLinkRow(name = '', url = '') {
