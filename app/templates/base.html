@@ -5,7 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}APAC Infra Task Manager{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        mono: ['JetBrains Mono', 'Cascadia Code', 'monospace'],
+      },
+      colors: {
+        'cc-bg': '#1a1b1e',
+        'cc-card': '#2c2e33',
+        'cc-border': '#373a40',
+      }
+    }
+  }
+}
+</script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
