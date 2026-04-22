@@ -3,7 +3,7 @@
           hx-get="{{ url_for('tasks.edit_field', id=task.id) }}?field={{ field }}"
           hx-target="closest [data-field-container]"
           hx-swap="outerHTML">
-        {{ getattr(task, field) or '-' }}
+        {{ task[field] if task[field] else '-' }}
     </span>
     <span class="ml-1 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">click to edit</span>
 </div>
