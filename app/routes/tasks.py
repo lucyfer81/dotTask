@@ -33,6 +33,12 @@ def list():
     tasks = query.order_by(Task.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
+    if request.headers.get("HX-Request"):
+        return render_template(
+            "tasks/partials/task_rows.html", tasks=tasks, today=date.today(),
+            status_options=get_options("statuses"),
+        )
+
     return render_template(
         "tasks/list.html",
         tasks=tasks, search=search, status=status, priority=priority,
