@@ -4,22 +4,22 @@
 
 {% block content %}
 <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Data Import / Export</h1>
-    <p class="mt-1 text-sm text-gray-500">Batch manage tasks and locations via Excel files</p>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Data Import / Export</h1>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Batch manage tasks and locations via Excel files</p>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Export Card -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="bg-white dark:bg-cc-card rounded-lg shadow-sm border border-gray-200 dark:border-cc-border p-6">
         <div class="flex items-center mb-4">
-            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900">Export Data</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Export Data</h2>
         </div>
-        <p class="text-sm text-gray-600 mb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Export all current tasks, locations, and assignment data as an Excel file. The workbook contains three sheets:
             <strong>Task_Master</strong>, <strong>Location_Master</strong>, and <strong>Task_Assignment</strong>.
         </p>
@@ -33,29 +33,29 @@
     </div>
 
     <!-- Import Card -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="bg-white dark:bg-cc-card rounded-lg shadow-sm border border-gray-200 dark:border-cc-border p-6">
         <div class="flex items-center mb-4">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                 </svg>
             </div>
-            <h2 class="text-lg font-semibold text-gray-900">Import Data</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Import Data</h2>
         </div>
-        <p class="text-sm text-gray-600 mb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Upload an Excel file to import data. You can choose to import specific sheets or all sheets.
         </p>
         <form action="{{ url_for('data_io.import_excel') }}" method="post" enctype="multipart/form-data">
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Choose File</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Choose File</label>
                     <input type="file" name="file" accept=".xlsx,.xls"
-                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                           class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-400 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Import Scope</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Import Scope</label>
                     <select name="sheet"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                            class="block w-full rounded-md border-gray-300 dark:border-cc-border shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2 dark:bg-cc-bg dark:text-gray-200">
                         <option value="">All Sheets</option>
                         <option value="Location_Master">Location_Master Only</option>
                         <option value="Task_Master">Task_Master Only</option>
@@ -73,12 +73,12 @@
     </div>
 </div>
 
-<div class="mt-6 p-4 bg-yellow-50 rounded-md border border-yellow-200">
+<div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-md border border-yellow-200 dark:border-yellow-800">
     <div class="flex">
         <svg class="w-5 h-5 text-yellow-400 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <p class="text-sm text-yellow-800">
+        <p class="text-sm text-yellow-800 dark:text-yellow-300">
             <strong>Note:</strong> Import adds new records (does not overwrite existing data). To update existing records, please edit or delete the old data in the system first.
         </p>
     </div>

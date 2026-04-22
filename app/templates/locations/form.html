@@ -6,27 +6,27 @@
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">{{ 'Edit Location' if location else 'New Location' }}</h1>
-        <a href="{{ url_for('locations.list') }}" class="text-sm text-gray-600 hover:text-gray-900">Back to List</a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ 'Edit Location' if location else 'New Location' }}</h1>
+        <a href="{{ url_for('locations.list') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Back to List</a>
     </div>
 
     <!-- Form -->
-    <form method="post" class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
+    <form method="post" class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Location Name -->
             <div>
-                <label for="location_name" class="block text-sm font-medium text-gray-700 mb-1">
+                <label for="location_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Location Name <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="location_name" name="location_name" value="{{ location.location_name if location else '' }}" required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
             </div>
 
             <!-- Country -->
             <div>
-                <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country</label>
                 <select id="country" name="country"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
                     <option value="">-- Select Country --</option>
                     {% for c in countries %}
                     <option value="{{ c }}" {% if location and location.country == c %}selected{% endif %}>{{ c }}</option>
@@ -36,16 +36,16 @@
 
             <!-- City -->
             <div>
-                <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
                 <input type="text" id="city" name="city" value="{{ location.city if location else '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
             </div>
 
             <!-- Location Type -->
             <div>
-                <label for="location_type" class="block text-sm font-medium text-gray-700 mb-1">Location Type</label>
+                <label for="location_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location Type</label>
                 <select id="location_type" name="location_type"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
                     <option value="">-- Select Type --</option>
                     {% for t in location_types %}
                     <option value="{{ t }}" {% if location and location.location_type == t %}selected{% endif %}>{{ t }}</option>
@@ -55,43 +55,43 @@
 
             <!-- Region -->
             <div>
-                <label for="region" class="block text-sm font-medium text-gray-700 mb-1">Region</label>
+                <label for="region" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Region</label>
                 <input type="text" id="region" name="region" value="{{ location.region if location else '' }}" placeholder="APAC-North / APAC-South"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
             </div>
 
             <!-- IT Manager -->
             <div>
-                <label for="it_manager" class="block text-sm font-medium text-gray-700 mb-1">IT Manager</label>
+                <label for="it_manager" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IT Manager</label>
                 <input type="text" id="it_manager" name="it_manager" value="{{ location.it_manager if location else '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
             </div>
 
             <!-- Primary IT Contact -->
             <div>
-                <label for="primary_it_contact" class="block text-sm font-medium text-gray-700 mb-1">Primary IT Contact</label>
+                <label for="primary_it_contact" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary IT Contact</label>
                 <input type="text" id="primary_it_contact" name="primary_it_contact" value="{{ location.primary_it_contact if location else '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
             </div>
 
             <!-- Active Status -->
             <div class="flex items-center">
                 <input type="checkbox" id="is_active" name="is_active" {% if not location or location.is_active %}checked{% endif %}
                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                <label for="is_active" class="ml-2 text-sm font-medium text-gray-700">Active</label>
+                <label for="is_active" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Active</label>
             </div>
 
             <!-- Comments -->
             <div class="md:col-span-2">
-                <label for="comments" class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+                <label for="comments" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comments</label>
                 <textarea id="comments" name="comments" rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ location.comments if location and location.comments else '' }}</textarea>
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">{{ location.comments if location and location.comments else '' }}</textarea>
             </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex items-center justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
-            <a href="{{ url_for('locations.list') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+        <div class="flex items-center justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-cc-border">
+            <a href="{{ url_for('locations.list') }}" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-cc-card border border-gray-300 dark:border-cc-border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
                 Cancel
             </a>
             <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">

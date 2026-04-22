@@ -7,7 +7,7 @@
     <!-- Page Header -->
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-            <h1 class="text-2xl font-bold text-gray-900">{{ task.task_name }}</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ task.task_name }}</h1>
             <span class="badge badge-{{ task.overall_status | lower | replace(' ', '-') }}">{{ task.overall_status }}</span>
             <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
         </div>
@@ -26,13 +26,13 @@
                     Delete
                 </button>
             </form>
-            <a href="{{ url_for('tasks.list') }}" class="inline-flex items-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50">Back to List</a>
+            <a href="{{ url_for('tasks.list') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-cc-card text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md border border-gray-300 dark:border-cc-border hover:bg-gray-50 dark:hover:bg-gray-700">Back to List</a>
         </div>
     </div>
 
     <!-- Scope Info -->
-    <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-4">
-        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+    <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-4">
+        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <span><strong>Scope:</strong> {{ task.scope_country or 'All Countries' }} / {{ task.scope_location_type or 'All Types' }}</span>
             <span><strong>Execution Model:</strong> {{ task.execution_model or '-' }}</span>
             <span><strong>Assigned Locations:</strong> {{ assignments | length }}</span>
@@ -44,45 +44,45 @@
         <!-- Left: Basic Info + Assignment List -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Basic Info -->
-            <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Basic Info</h2>
+            <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">Basic Info</h2>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Source</dt>
-                        <dd class="text-sm text-gray-900 mt-1">{{ task.task_source or '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Source</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ task.task_source or '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Stakeholder</dt>
-                        <dd class="text-sm text-gray-900 mt-1">{{ task.stakeholder or '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Stakeholder</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ task.stakeholder or '-' }}</dd>
                     </div>
                     <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-gray-500">Description</dt>
-                        <dd class="text-sm text-gray-900 mt-1 whitespace-pre-wrap">{{ task.task_description or '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Description</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1 whitespace-pre-wrap">{{ task.task_description or '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Owner</dt>
-                        <dd class="text-sm text-gray-900 mt-1">{{ task.task_owner or '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Owner</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ task.task_owner or '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Start Date</dt>
-                        <dd class="text-sm text-gray-900 mt-1">{{ task.start_date.strftime('%Y-%m-%d') if task.start_date else '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Start Date</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ task.start_date.strftime('%Y-%m-%d') if task.start_date else '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Target Date</dt>
-                        <dd class="text-sm text-gray-900 mt-1">{{ task.target_date.strftime('%Y-%m-%d') if task.target_date else '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Target Date</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ task.target_date.strftime('%Y-%m-%d') if task.target_date else '-' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                        <dd class="text-sm text-gray-900 mt-1">{{ task.last_update.strftime('%Y-%m-%d') if task.last_update else '-' }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Last Updated</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ task.last_update.strftime('%Y-%m-%d') if task.last_update else '-' }}</dd>
                     </div>
                     {% set file_links = task.file_links %}
                     {% if file_links %}
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">File Links</dt>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">File Links</dt>
                         <dd class="text-sm mt-1 space-y-1">
                             {% for link in file_links %}
                             <a href="{{ link.url }}" target="_blank" rel="noopener"
-                               class="flex items-center gap-1 text-blue-600 hover:text-blue-800">
+                               class="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                 <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                 </svg>
@@ -95,11 +95,11 @@
                     {% set mail_links = task.mail_links %}
                     {% if mail_links %}
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Email Links</dt>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email Links</dt>
                         <dd class="text-sm mt-1 space-y-1">
                             {% for link in mail_links %}
                             <a href="{{ link.url }}" target="_blank" rel="noopener"
-                               class="flex items-center gap-1 text-blue-600 hover:text-blue-800">
+                               class="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                 <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
@@ -111,51 +111,51 @@
                     {% endif %}
                     {% if task.comments %}
                     <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-gray-500">Comments</dt>
-                        <dd class="text-sm text-gray-900 mt-1 whitespace-pre-wrap">{{ task.comments }}</dd>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Comments</dt>
+                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1 whitespace-pre-wrap">{{ task.comments }}</dd>
                     </div>
                     {% endif %}
                 </dl>
             </div>
 
             <!-- Location Assignments -->
-            <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+            <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">
                     Location Assignments
-                    <span class="text-sm font-normal text-gray-500">({{ assignments | length }} locations)</span>
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">({{ assignments | length }} locations)</span>
                 </h2>
 
                 {% if assignments %}
                 <div class="space-y-4">
                     {% for assignment in assignments %}
-                    <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="border border-gray-200 dark:border-cc-border rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-semibold text-gray-800">{{ assignment.location.location_name }}</h3>
+                            <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ assignment.location.location_name }}</h3>
                             <form method="post" action="{{ url_for('tasks.remove_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to remove this assignment?')">
-                                <button type="submit" class="text-xs text-red-600 hover:text-red-800">Remove</button>
+                                <button type="submit" class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">Remove</button>
                             </form>
                         </div>
                         <form method="post" action="{{ url_for('tasks.update_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Local Status</label>
-                                <select name="local_status" class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Local Status</label>
+                                <select name="local_status" class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
                                     {% for ls in local_status_options %}
                                     <option value="{{ ls }}" {% if assignment.local_status == ls %}selected{% endif %}>{{ ls }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">IT Person</label>
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">IT Person</label>
                                 <input type="text" name="it_name" value="{{ assignment.it_name or '' }}"
-                                    class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Task Log</label>
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Task Log</label>
                                 {% if assignment.task_log %}
-                                <div class="mb-2 p-2 bg-gray-50 rounded text-xs text-gray-700 whitespace-pre-wrap max-h-40 overflow-y-auto border border-gray-200">{{ assignment.task_log }}</div>
+                                <div class="mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap max-h-40 overflow-y-auto border border-gray-200 dark:border-cc-border">{{ assignment.task_log }}</div>
                                 {% endif %}
                                 <input type="text" name="task_log_entry" placeholder="Add a log entry..."
-                                    class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
                             </div>
                             <div class="sm:col-span-2 flex justify-end">
                                 <button type="submit" class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700">Update</button>
@@ -165,17 +165,17 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-sm text-gray-500 py-4">No assignments yet.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 py-4">No assignments yet.</p>
                 {% endif %}
 
                 <!-- Add Location -->
                 {% if unassigned_locations %}
-                <div class="mt-4 pt-4 border-t border-gray-200">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Add Location</h3>
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-cc-border">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Add Location</h3>
                     <form method="post" action="{{ url_for('tasks.assign_location', id=task.id) }}" class="flex flex-wrap items-end gap-3">
                         <div class="flex-1 min-w-[200px]">
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Select Location</label>
-                            <select name="location_id" required class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Select Location</label>
+                            <select name="location_id" required class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
                                 <option value="">-- Select Location --</option>
                                 {% for loc in unassigned_locations %}
                                 <option value="{{ loc.id }}">{{ loc.location_name }}</option>
@@ -183,9 +183,9 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">IT Person</label>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">IT Person</label>
                             <input type="text" name="it_name" value="" placeholder="Optional"
-                                class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                class="text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
                         </div>
                         <button type="submit" class="px-3 py-1 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700">Assign</button>
                     </form>
@@ -196,13 +196,13 @@
 
         <!-- Right: Progress Summary -->
         <div class="space-y-6">
-            <div class="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Progress Summary</h2>
+            <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">Progress Summary</h2>
 
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Total Assignments</span>
-                        <span class="text-sm font-semibold text-gray-900">{{ assignments | length }}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Total Assignments</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ assignments | length }}</span>
                     </div>
 
                     {% set ns = namespace(completed=0, in_progress=0, pending=0, blocked=0, na=0) %}
@@ -216,34 +216,34 @@
                     {% endfor %}
 
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
                             <span class="badge badge-completed">Completed</span>
                         </span>
-                        <span class="text-sm font-semibold text-gray-900">{{ ns.completed }}</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.completed }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
                             <span class="badge badge-in-progress">In Progress</span>
                         </span>
-                        <span class="text-sm font-semibold text-gray-900">{{ ns.in_progress }}</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.in_progress }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
                             <span class="badge badge-pending">Pending</span>
                         </span>
-                        <span class="text-sm font-semibold text-gray-900">{{ ns.pending }}</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.pending }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
                             <span class="badge badge-blocked">Blocked</span>
                         </span>
-                        <span class="text-sm font-semibold text-gray-900">{{ ns.blocked }}</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.blocked }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
                             <span class="badge badge-na">N/A</span>
                         </span>
-                        <span class="text-sm font-semibold text-gray-900">{{ ns.na }}</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.na }}</span>
                     </div>
 
                     <!-- Progress Bar -->
@@ -251,10 +251,10 @@
                     {% set pct = (ns.completed / (assignments | length) * 100) | int %}
                     <div class="mt-4">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-xs font-medium text-gray-600">Progress</span>
-                            <span class="text-xs font-medium text-gray-600">{{ pct }}%</span>
+                            <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Progress</span>
+                            <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ pct }}%</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div class="bg-green-500 h-2 rounded-full" style="width: {{ pct }}%"></div>
                         </div>
                     </div>
@@ -264,14 +264,14 @@
 
             <!-- Blocker Alert -->
             {% if ns.blocked > 0 %}
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 class="text-sm font-semibold text-red-800 mb-2">
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <h3 class="text-sm font-semibold text-red-800 dark:text-red-400 mb-2">
                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                     </svg>
                     {{ ns.blocked }} location(s) blocked
                 </h3>
-                <ul class="text-sm text-red-700 space-y-1">
+                <ul class="text-sm text-red-700 dark:text-red-400 space-y-1">
                     {% for a in assignments %}
                     {% if a.local_status == 'Blocked' %}
                     <li>{{ a.location.location_name }}</li>
