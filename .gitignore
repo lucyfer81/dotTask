@@ -6,3 +6,5 @@ flask.log
 .flask.pid
 .playwright-mcp/
 *.png
+APAC_Infra_Task_List.xlsx
+CLAUDE.md
