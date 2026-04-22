@@ -1,20 +1,17 @@
-/* HTMX 指示器 */
-.htmx-indicator {
-    display: none;
-}
-.htmx-request .htmx-indicator {
-    display: inline-block;
-}
-.htmx-request.htmx-indicator {
-    display: inline-block;
-}
+/* === HTMX 指示器 === */
+.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator { display: inline-block; }
+.htmx-request.htmx-indicator { display: inline-block; }
 
-/* 表格行 hover */
+/* === 表格行 hover === */
 .table-row-hover:hover {
     background-color: #f9fafb;
 }
+.dark .table-row-hover:hover {
+    background-color: #353840;
+}
 
-/* 状态颜色标签 */
+/* === Badge 基础 === */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -24,6 +21,8 @@
     font-weight: 600;
     white-space: nowrap;
 }
+
+/* === 浅色 Badge === */
 .badge-not-started { background-color: #e5e7eb; color: #374151; }
 .badge-in-progress { background-color: #dbeafe; color: #1d4ed8; }
 .badge-completed { background-color: #d1fae5; color: #065f46; }
@@ -36,3 +35,157 @@
 .badge-high { background-color: #fef3c7; color: #92400e; }
 .badge-medium { background-color: #dbeafe; color: #1d4ed8; }
 .badge-low { background-color: #d1fae5; color: #065f46; }
+
+/* === 暗色 Badge === */
+.dark .badge-not-started { background-color: #374151; color: #9ca3af; }
+.dark .badge-in-progress { background-color: #1e3a5f; color: #60a5fa; }
+.dark .badge-completed { background-color: #064e3b; color: #34d399; }
+.dark .badge-on-hold { background-color: #78350f; color: #fbbf24; }
+.dark .badge-cancelled { background-color: #7f1d1d; color: #fca5a5; }
+.dark .badge-pending { background-color: #374151; color: #9ca3af; }
+.dark .badge-blocked { background-color: #7f1d1d; color: #fca5a5; }
+.dark .badge-na { background-color: #1f2937; color: #6b7280; }
+.dark .badge-critical { background-color: #7f1d1d; color: #fca5a5; }
+.dark .badge-high { background-color: #78350f; color: #fbbf24; }
+.dark .badge-medium { background-color: #1e3a5f; color: #60a5fa; }
+.dark .badge-low { background-color: #064e3b; color: #34d399; }
+
+/* === 暗色状态发光 === */
+.dark .badge-completed {
+    box-shadow: 0 0 8px rgba(64, 192, 87, 0.4);
+}
+.dark .badge-blocked {
+    animation: pulse-red 2s ease-in-out infinite;
+}
+.dark .badge-in-progress {
+    box-shadow: 0 0 6px rgba(34, 139, 230, 0.3);
+}
+
+@keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 4px rgba(250, 82, 82, 0.3); }
+    50% { box-shadow: 0 0 12px rgba(250, 82, 82, 0.6); }
+}
+
+/* === 全局动效 === */
+.fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.scale-on-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.scale-on-hover:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.dark .scale-on-hover:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* === Toast 通知 === */
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.toast {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: slideInRight 0.3s ease-out;
+    max-width: 360px;
+}
+.toast-success { background-color: #065f46; color: #34d399; }
+.toast-error { background-color: #7f1d1d; color: #fca5a5; }
+.toast-info { background-color: #1e3a5f; color: #60a5fa; }
+.toast-exit { animation: slideOutRight 0.3s ease-in forwards; }
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(100%); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(100%); }
+}
+
+/* === 搜索行动画 === */
+.animate-row-exit {
+    transform: scaleY(0);
+    opacity: 0;
+    max-height: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: all 300ms ease-out;
+}
+.animate-row-enter {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* === 抽屉面板 === */
+#drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    opacity: 0;
+    transition: opacity 300ms;
+    pointer-events: none;
+}
+#drawer-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+#drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 600px;
+    max-width: 90vw;
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 300ms ease;
+    overflow-y: auto;
+}
+#drawer-panel.active {
+    transform: translateX(0);
+}
+
+/* === 看板卡片拖拽 === */
+.sortable-ghost {
+    opacity: 0.4;
+}
+.sortable-chosen {
+    transform: rotate(2deg) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* === 进度链小方块 === */
+.progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-right: 2px;
+}
+.progress-dot-completed { background-color: #40c057; }
+.progress-dot-in-progress { background-color: #228be6; }
+.progress-dot-pending { background-color: #6b7280; }
+.progress-dot-blocked { background-color: #fa5252; }
+.progress-dot-na { background-color: #4b5563; }
+.progress-chain-complete {
+    box-shadow: 0 0 8px rgba(64, 192, 87, 0.5);
+}
