@@ -253,6 +253,17 @@ def edit_field(id):
     return render_template("tasks/partials/edit_field.html", task=task, field=field, value=value)
 
 
+@bp.route("/<int:id>/display-field")
+def display_field(id):
+    """Return display fragment for HTMX (cancel edit)."""
+    task = Task.query.get_or_404(id)
+    field = request.args.get("field")
+    allowed = {"task_description", "comments"}
+    if field not in allowed:
+        return "", 400
+    return render_template("tasks/partials/display_field.html", task=task, field=field)
+
+
 @bp.route("/<int:id>/save-field", methods=["POST"])
 def save_field(id):
     """Save inline edit and return display fragment for HTMX."""
