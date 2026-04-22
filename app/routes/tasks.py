@@ -41,6 +41,15 @@ def list():
     )
 
 
+@bp.route("/kanban")
+def kanban():
+    tasks = Task.query.order_by(Task.created_at.desc()).all()
+    columns = {}
+    for s in get_options("statuses"):
+        columns[s] = [t for t in tasks if t.overall_status == s]
+    return render_template("tasks/kanban.html", columns=columns)
+
+
 @bp.route("/new", methods=["GET", "POST"])
 def create():
     if request.method == "POST":
