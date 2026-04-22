@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Kanban - APAC Task Manager{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Kanban Board</h1>
+        <div class="flex gap-2">
+            <a href="{{ url_for('tasks.list') }}" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-cc-card border border-gray-300 dark:border-cc-border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">List View</a>
+            <a href="{{ url_for('tasks.create') }}" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">New Task</a>
+        </div>
+    </div>
+
+    <div class="flex gap-4 overflow-x-auto pb-4" id="kanban-board">
+        {% for status, tasks in columns.items() %}
+        <div class="flex-shrink-0 w-72">
+            <div class="bg-gray-100 dark:bg-cc-bg rounded-lg p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <span class="badge badge-{{ status | lower | replace(' ', '-') }}">{{ status }}</span>
+                    </h3>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ tasks | length }}</span>
+                </div>
+                <div class="space-y-2 min-h-[200px] kanban-column" data-status="{{ status }}">
+                    {% for task in tasks %}
+                    <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
+                         data-task-id="{{ task.id }}">
+                        <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 cursor-pointer"
+                             onclick="openDrawer('{{ url_for('tasks.drawer', id=task.id) }}')">
+                            {{ task.task_name }}
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
+                            {% if task.target_date %}
+                            <span class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ task.target_date.strftime('%m/%d') }}</span>
+                            {% endif %}
+                        </div>
+                        {% set assignments = task.assignments.all() %}
+                        {% if assignments %}
+                        <div class="mt-2 flex flex-wrap gap-0.5">
+                            {% for a in assignments %}
+                            <span class="progress-dot progress-dot-{{ (a.local_status or 'pending') | lower | replace(' ', '-') | replace('/', '') }}"
+                                  title="{{ a.location.location_name }}: {{ a.local_status or 'Pending' }}"></span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.kanban-column').forEach(function(col) {
+        new Sortable(col, {
+            group: 'kanban',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            animation: 200,
+            onEnd: function(evt) {
+                var taskId = evt.item.dataset.taskId;
+                var newStatus = evt.to.dataset.status;
+                htmx.ajax('POST', '/tasks/' + taskId + '/status', {
+                    values: { overall_status: newStatus },
+                    target: 'body',
+                    swap: 'none'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
