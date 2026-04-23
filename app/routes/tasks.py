@@ -241,7 +241,7 @@ def update_assignment(task_id, assignment_id):
     assignment.last_update = date.today()
     db.session.commit()
     flash("Assignment updated", "success")
-    return redirect(url_for("tasks.detail", id=task_id))
+    return redirect(url_for("tasks.detail", id=task_id) + f"#assignment-{assignment_id}")
 
 
 @bp.route("/<int:task_id>/assignment/<int:assignment_id>/delete", methods=["POST"])
