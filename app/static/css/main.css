@@ -213,3 +213,134 @@
 .sb-pending    { background-color: #6b7280; }
 .sb-blocked    { background-color: #fa5252; }
 .sb-na         { background-color: #4b5563; }
+
+/* === 紧凑位置列表 === */
+.loc-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 150ms;
+    gap: 0.75rem;
+    user-select: none;
+}
+.loc-row:hover {
+    background-color: #f9fafb;
+}
+.dark .loc-row:hover {
+    background-color: #353840;
+}
+.loc-row.expanded {
+    background-color: #f0f7ff;
+}
+.dark .loc-row.expanded {
+    background-color: #1e3a5f;
+}
+.loc-arrow {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
+    transition: transform 200ms ease;
+}
+.loc-row.expanded .loc-arrow {
+    transform: rotate(90deg);
+}
+.loc-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.loc-it {
+    font-size: 0.75rem;
+    color: #6b7280;
+    flex-shrink: 0;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dark .loc-it {
+    color: #9ca3af;
+}
+.loc-remove-btn {
+    opacity: 0;
+    transition: opacity 150ms;
+    flex-shrink: 0;
+}
+.loc-row:hover .loc-remove-btn {
+    opacity: 1;
+}
+.loc-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease-out;
+    background-color: #f9fafb;
+}
+.dark .loc-detail {
+    background-color: #252830;
+}
+.loc-row-wrapper.expanded .loc-detail {
+    max-height: 400px;
+    border-top: 1px solid #e5e7eb;
+}
+.dark .loc-row-wrapper.expanded .loc-detail {
+    border-top-color: #373a40;
+}
+.loc-filter-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 150ms;
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+.dark .loc-filter-tab {
+    background-color: #1f2937;
+    color: #9ca3af;
+}
+.loc-filter-tab:hover {
+    border-color: #9ca3af;
+}
+.loc-filter-tab.active {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+}
+.dark .loc-filter-tab.active {
+    background-color: #1e3a5f;
+    color: #60a5fa;
+    border-color: #2563eb;
+}
+.loc-filter-count {
+    font-weight: 600;
+}
+.progress-clickable {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: -4px -8px;
+    transition: background-color 150ms;
+}
+.progress-clickable:hover {
+    background-color: #f3f4f6;
+}
+.dark .progress-clickable:hover {
+    background-color: #353840;
+}
+.progress-clickable.highlighted {
+    background-color: #dbeafe;
+}
+.dark .progress-clickable.highlighted {
+    background-color: #1e3a5f;
+}
