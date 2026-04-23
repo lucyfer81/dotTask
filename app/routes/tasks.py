@@ -49,11 +49,29 @@ def list():
 
 @bp.route("/kanban")
 def kanban():
+    location_id = request.args.get("location_id", type=int)
+    locations = Location.query.filter_by(is_active=True).order_by(Location.location_name).all()
+
+    if location_id:
+        location = Location.query.get_or_404(location_id)
+        assignments = TaskAssignment.query.filter_by(location_id=location_id).all()
+        columns = {}
+        local_statuses = get_options("local_statuses")
+        for s in local_statuses:
+            columns[s] = [a for a in assignments if a.local_status == s]
+        default_status = "Pending"
+        unmatched = [a for a in assignments if not a.local_status or a.local_status not in columns]
+        if unmatched:
+            columns.setdefault(default_status, []).extend(unmatched)
+        return render_template("tasks/kanban.html", columns=columns, locations=locations,
+                             location=location, filtered=True)
+
     tasks = Task.query.order_by(Task.created_at.desc()).all()
     columns = {}
     for s in get_options("statuses"):
         columns[s] = [t for t in tasks if t.overall_status == s]
-    return render_template("tasks/kanban.html", columns=columns)
+    return render_template("tasks/kanban.html", columns=columns, locations=locations,
+                         location=None, filtered=False)
 
 
 @bp.route("/new", methods=["GET", "POST"])
@@ -156,6 +174,16 @@ def delete(id):
 
 @bp.route("/<int:id>/status", methods=["POST"])
 def update_status(id):
+    loc_id = request.form.get("location_id", type=int)
+    if loc_id:
+        assignment = TaskAssignment.query.filter_by(task_id=id, location_id=loc_id).first_or_404()
+        new_status = request.form.get("local_status")
+        if new_status in get_options("local_statuses"):
+            assignment.local_status = new_status
+            assignment.last_update = date.today()
+            db.session.commit()
+        return redirect(request.headers.get("Referer", url_for("tasks.kanban", location_id=loc_id)))
+
     task = Task.query.get_or_404(id)
     new_status = request.form.get("overall_status")
     if new_status in get_options("statuses"):
