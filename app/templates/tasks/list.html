@@ -49,14 +49,14 @@
         <table class="min-w-full divide-y divide-gray-200 dark:divide-cc-border">
             <thead class="bg-gray-50 dark:bg-cc-bg">
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Task Name</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priority</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Owner</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Target Date</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Links</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Scope</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Task Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Priority</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Owner</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Target Date</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Links</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Scope</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody id="task-table-body" class="bg-white dark:bg-cc-card divide-y divide-gray-200 dark:divide-cc-border">
@@ -95,18 +95,18 @@
                         </div>
                         {% endif %}
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ task.task_owner or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ task.task_owner or '-' }}</td>
                     <td class="px-4 py-3 text-sm">
                         {% if task.target_date %}
                             {% set is_overdue = task.target_date < today and task.overall_status not in ['Completed', 'Cancelled'] %}
-                            <span class="{{ 'text-red-600 dark:text-red-400 font-semibold' if is_overdue else 'text-gray-600 dark:text-gray-400' }}">
+                            <span class="{{ 'text-red-600 dark:text-red-400 font-semibold' if is_overdue else 'text-gray-600 dark:text-gray-300' }}">
                                 {{ task.target_date.strftime('%Y-%m-%d') }}
                             </span>
                         {% else %}
-                            <span class="text-gray-400 dark:text-gray-500">-</span>
+                            <span class="text-gray-400 dark:text-gray-400">-</span>
                         {% endif %}
                     </td>
-                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                             {% set fl = task.file_links %}
                             {% set ml = task.mail_links %}
                             {% if fl or ml %}
@@ -134,10 +134,10 @@
                                 -
                             {% endif %}
                         </td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                         {{ task.scope_type }}
                         {% if task.scope_detail %}
-                            <span class="text-gray-400 dark:text-gray-500">({{ task.scope_detail }})</span>
+                            <span class="text-gray-400 dark:text-gray-400">({{ task.scope_detail }})</span>
                         {% endif %}
                     </td>
                     <td class="px-4 py-3 text-sm text-right space-x-1">
@@ -150,7 +150,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No tasks yet. Click "New Task" to get started.</td>
+                    <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-300">No tasks yet. Click "New Task" to get started.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -160,7 +160,7 @@
     <!-- Pagination -->
     {% if tasks.pages > 1 %}
     <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
+        <p class="text-sm text-gray-600 dark:text-gray-300">
             {{ tasks.total }} records total, page {{ tasks.page }} of {{ tasks.pages }}
         </p>
         <div class="flex items-center space-x-1">
@@ -172,7 +172,7 @@
                 {% if p %}
                 <a href="{{ url_for('tasks.list', page=p, search=search, status=status, priority=priority) }}" class="px-3 py-1 text-sm border rounded-md {{ 'bg-blue-600 text-white border-blue-600' if p == tasks.page else 'border-gray-300 dark:border-cc-border hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300' }}">{{ p }}</a>
                 {% else %}
-                <span class="px-2 py-1 text-sm text-gray-400 dark:text-gray-500">...</span>
+                <span class="px-2 py-1 text-sm text-gray-400 dark:text-gray-400">...</span>
                 {% endif %}
             {% endfor %}
 

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Data Import / Export</h1>
-    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Batch manage tasks and locations via Excel files</p>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Batch manage tasks and locations via Excel files</p>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -19,7 +19,7 @@
             </div>
             <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Export Data</h2>
         </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
             Export all current tasks, locations, and assignment data as an Excel file. The workbook contains three sheets:
             <strong>Task_Master</strong>, <strong>Location_Master</strong>, and <strong>Task_Assignment</strong>.
         </p>
@@ -42,7 +42,7 @@
             </div>
             <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Import Data</h2>
         </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
             Upload an Excel file to import data. You can choose to import specific sheets or all sheets.
         </p>
         <form action="{{ url_for('data_io.import_excel') }}" method="post" enctype="multipart/form-data">
@@ -50,7 +50,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Choose File</label>
                     <input type="file" name="file" accept=".xlsx,.xls"
-                           class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-400 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50">
+                           class="block w-full text-sm text-gray-500 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-400 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Import Scope</label>

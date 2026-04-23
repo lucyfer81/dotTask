@@ -40,23 +40,23 @@
         <table class="min-w-full divide-y divide-gray-200 dark:divide-cc-border">
             <thead class="bg-gray-50 dark:bg-cc-bg">
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Location Name</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Country</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">City</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Region</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Location Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Country</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">City</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Region</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-cc-card divide-y divide-gray-200 dark:divide-cc-border">
                 {% for loc in locations.items %}
                 <tr class="table-row-hover">
                     <td class="px-4 py-3 text-sm font-medium text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"><a href="{{ url_for('locations.detail', id=loc.id) }}">{{ loc.location_name }}</a></td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ loc.country or '-' }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ loc.city or '-' }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ loc.location_type or '-' }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ loc.region or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ loc.country or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ loc.city or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ loc.location_type or '-' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ loc.region or '-' }}</td>
                     <td class="px-4 py-3 text-sm">
                         {% if loc.is_active %}
                         <span class="badge badge-completed">Active</span>
@@ -78,7 +78,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No locations yet.</td>
+                    <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-300">No locations yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -88,7 +88,7 @@
     <!-- Pagination -->
     {% if locations.pages > 1 %}
     <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
+        <p class="text-sm text-gray-600 dark:text-gray-300">
             {{ locations.total }} records total, page {{ locations.page }} of {{ locations.pages }}
         </p>
         <div class="flex items-center space-x-1">
@@ -100,7 +100,7 @@
                 {% if p %}
                 <a href="{{ url_for('locations.list', page=p, search=search, active=active_filter) }}" class="px-3 py-1 text-sm border rounded-md {{ 'bg-blue-600 text-white border-blue-600' if p == locations.page else 'border-gray-300 dark:border-cc-border hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300' }}">{{ p }}</a>
                 {% else %}
-                <span class="px-2 py-1 text-sm text-gray-400 dark:text-gray-500">...</span>
+                <span class="px-2 py-1 text-sm text-gray-400 dark:text-gray-400">...</span>
                 {% endif %}
             {% endfor %}
 

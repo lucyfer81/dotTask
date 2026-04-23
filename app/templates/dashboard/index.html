@@ -14,23 +14,23 @@
 <!-- Stats Cards -->
 <div id="stats-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
     <div class="bg-white dark:bg-cc-card rounded-lg shadow p-5 border-l-4 border-blue-500 scale-on-hover">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Tasks</div>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">Total Tasks</div>
         <div class="text-3xl font-bold text-gray-800 dark:text-gray-100 mt-1">{{ total_tasks }}</div>
     </div>
     <div class="bg-white dark:bg-cc-card rounded-lg shadow p-5 border-l-4 border-yellow-500 scale-on-hover">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">In Progress</div>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">In Progress</div>
         <div class="text-3xl font-bold text-yellow-600 mt-1">{{ in_progress }}</div>
     </div>
     <div class="bg-white dark:bg-cc-card rounded-lg shadow p-5 border-l-4 border-green-500 scale-on-hover">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Completed</div>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">Completed</div>
         <div class="text-3xl font-bold text-green-600 mt-1">{{ completed }}</div>
     </div>
     <div class="bg-white dark:bg-cc-card rounded-lg shadow p-5 border-l-4 border-red-500 scale-on-hover">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Overdue</div>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">Overdue</div>
         <div class="text-3xl font-bold text-red-600 mt-1">{{ overdue }}</div>
     </div>
     <div class="bg-white dark:bg-cc-card rounded-lg shadow p-5 border-l-4 border-orange-500 scale-on-hover">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Blocked</div>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">Blocked</div>
         <div class="text-3xl font-bold text-orange-600 mt-1">{{ blocked }}</div>
     </div>
 </div>
@@ -84,7 +84,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-gray-500 dark:text-gray-400 text-sm">No overdue tasks</p>
+        <p class="text-gray-500 dark:text-gray-300 text-sm">No overdue tasks</p>
         {% endif %}
     </div>
 
@@ -112,7 +112,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-gray-500 dark:text-gray-400 text-sm">No tasks due soon</p>
+        <p class="text-gray-500 dark:text-gray-300 text-sm">No tasks due soon</p>
         {% endif %}
     </div>
 </div>

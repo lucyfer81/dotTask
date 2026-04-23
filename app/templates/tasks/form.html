@@ -8,9 +8,9 @@
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ 'Edit Task' if task else 'New Task' }}</h1>
         {% if task %}
-        <a href="{{ url_for('tasks.detail', id=task.id) }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Back to Detail</a>
+        <a href="{{ url_for('tasks.detail', id=task.id) }}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-200">Back to Detail</a>
         {% else %}
-        <a href="{{ url_for('tasks.list') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Back to List</a>
+        <a href="{{ url_for('tasks.list') }}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-200">Back to List</a>
         {% endif %}
     </div>
 
@@ -88,10 +88,10 @@
                         <input type="checkbox" id="select-all-locations" class="rounded border-gray-300 dark:border-cc-border text-blue-600 focus:ring-blue-500">
                         Select All
                     </label>
-                    <span id="location-count" class="text-sm text-gray-500 dark:text-gray-400">0 locations</span>
+                    <span id="location-count" class="text-sm text-gray-500 dark:text-gray-300">0 locations</span>
                 </div>
                 <div id="location-checkboxes" class="divide-y divide-gray-100 dark:divide-cc-border">
-                    <p class="text-sm text-gray-400 dark:text-gray-500 p-4">Loading locations...</p>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 p-4">Loading locations...</p>
                 </div>
             </div>
         </div>

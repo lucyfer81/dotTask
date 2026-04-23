@@ -1,3 +1,7 @@
+/* === Color Scheme (for native date picker etc.) === */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
 /* === HTMX 指示器 === */
 .htmx-indicator { display: none; }
 .htmx-request .htmx-indicator { display: inline-block; }
@@ -37,14 +41,14 @@
 .badge-low { background-color: #d1fae5; color: #065f46; }
 
 /* === 暗色 Badge === */
-.dark .badge-not-started { background-color: #374151; color: #9ca3af; }
+.dark .badge-not-started { background-color: #374151; color: #d1d5db; }
 .dark .badge-in-progress { background-color: #1e3a5f; color: #60a5fa; }
 .dark .badge-completed { background-color: #064e3b; color: #34d399; }
 .dark .badge-on-hold { background-color: #78350f; color: #fbbf24; }
 .dark .badge-cancelled { background-color: #7f1d1d; color: #fca5a5; }
-.dark .badge-pending { background-color: #374151; color: #9ca3af; }
+.dark .badge-pending { background-color: #374151; color: #d1d5db; }
 .dark .badge-blocked { background-color: #7f1d1d; color: #fca5a5; }
-.dark .badge-na { background-color: #1f2937; color: #6b7280; }
+.dark .badge-na { background-color: #1f2937; color: #9ca3af; }
 .dark .badge-critical { background-color: #7f1d1d; color: #fca5a5; }
 .dark .badge-high { background-color: #78350f; color: #fbbf24; }
 .dark .badge-medium { background-color: #1e3a5f; color: #60a5fa; }
@@ -240,7 +244,7 @@
     flex-shrink: 0;
     width: 16px;
     height: 16px;
-    color: #9ca3af;
+    color: #d1d5db;
     transition: transform 200ms ease;
 }
 .loc-row.expanded .loc-arrow {
@@ -265,7 +269,7 @@
     white-space: nowrap;
 }
 .dark .loc-it {
-    color: #9ca3af;
+    color: #d1d5db;
 }
 .loc-remove-btn {
     opacity: 0;
@@ -307,7 +311,7 @@
 }
 .dark .loc-filter-tab {
     background-color: #1f2937;
-    color: #9ca3af;
+    color: #d1d5db;
 }
 .loc-filter-tab:hover {
     border-color: #9ca3af;

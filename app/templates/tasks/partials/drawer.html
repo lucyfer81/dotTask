@@ -9,7 +9,7 @@
         </div>
         <div class="flex items-center gap-2">
             <a href="{{ url_for('tasks.detail', id=task.id) }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Open full page</a>
-            <button onclick="closeDrawer()" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400">
+            <button onclick="closeDrawer()" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-300">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
@@ -18,19 +18,19 @@
     </div>
     <div class="grid grid-cols-2 gap-3 text-sm">
         <div>
-            <span class="text-gray-500 dark:text-gray-400">Owner:</span>
+            <span class="text-gray-500 dark:text-gray-300">Owner:</span>
             <span class="ml-1 text-gray-900 dark:text-gray-200 font-mono">{{ task.task_owner or '-' }}</span>
         </div>
         <div>
-            <span class="text-gray-500 dark:text-gray-400">Target:</span>
+            <span class="text-gray-500 dark:text-gray-300">Target:</span>
             <span class="ml-1 text-gray-900 dark:text-gray-200 font-mono">{{ task.target_date.strftime('%Y-%m-%d') if task.target_date else '-' }}</span>
         </div>
         <div>
-            <span class="text-gray-500 dark:text-gray-400">Scope:</span>
+            <span class="text-gray-500 dark:text-gray-300">Scope:</span>
             <span class="ml-1 text-gray-900 dark:text-gray-200">{{ task.scope_country or 'All' }} / {{ task.scope_location_type or 'All' }}</span>
         </div>
         <div>
-            <span class="text-gray-500 dark:text-gray-400">Execution:</span>
+            <span class="text-gray-500 dark:text-gray-300">Execution:</span>
             <span class="ml-1 text-gray-900 dark:text-gray-200">{{ task.execution_model or '-' }}</span>
         </div>
     </div>
@@ -47,8 +47,8 @@
     {% set pct = (ns.completed / (assignments | length) * 100) | int %}
     <div>
         <div class="flex justify-between text-xs mb-1">
-            <span class="text-gray-600 dark:text-gray-400">Progress {{ pct }}%</span>
-            <span class="text-gray-500 dark:text-gray-500">{{ ns.completed }}/{{ assignments | length }} done</span>
+            <span class="text-gray-600 dark:text-gray-300">Progress {{ pct }}%</span>
+            <span class="text-gray-500 dark:text-gray-400">{{ ns.completed }}/{{ assignments | length }} done</span>
         </div>
         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
@@ -104,9 +104,9 @@
             </div>
             {% endfor %}
         </div>
-        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400" id="drawer-loc-count">Showing {{ assignments | length }} / {{ assignments | length }}</p>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-300" id="drawer-loc-count">Showing {{ assignments | length }} / {{ assignments | length }}</p>
         {% else %}
-        <p class="text-sm text-gray-500 dark:text-gray-400">No assignments.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-300">No assignments.</p>
         {% endif %}
     </div>
 </div>

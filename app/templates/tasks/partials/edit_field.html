@@ -9,7 +9,7 @@
               autofocus>{{ value }}</textarea>
     <div class="flex gap-2 mt-1">
         <button type="submit" class="px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700">Save</button>
-        <button type="button" class="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200"
+        <button type="button" class="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200"
                 onclick="htmx.ajax('GET', '{{ url_for('tasks.display_field', id=task.id) }}?field={{ field }}', {target: this.closest('[data-field-container]'), swap: 'outerHTML'})">Cancel</button>
     </div>
 </form>

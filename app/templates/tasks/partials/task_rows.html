@@ -21,23 +21,23 @@
     </td>
     <td class="px-4 py-3 text-sm">
     </td>
-    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ task.task_owner or '-' }}</td>
+    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ task.task_owner or '-' }}</td>
     <td class="px-4 py-3 text-sm">
         {% if task.target_date %}
             {% set is_overdue = task.target_date < today and task.overall_status not in ['Completed', 'Cancelled'] %}
-            <span class="{{ 'text-red-600 dark:text-red-400 font-semibold' if is_overdue else 'text-gray-600 dark:text-gray-400' }} font-mono">
+            <span class="{{ 'text-red-600 dark:text-red-400 font-semibold' if is_overdue else 'text-gray-600 dark:text-gray-300' }} font-mono">
                 {{ task.target_date.strftime('%Y-%m-%d') }}
             </span>
         {% else %}
             <span class="text-gray-400">-</span>
         {% endif %}
     </td>
-    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
         {% set fl = task.file_links %}
         {% set ml = task.mail_links %}
         {% if fl or ml %}{{ (fl | length) + (ml | length) }}{% else %}-{% endif %}
     </td>
-    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
         {{ task.scope_type }}
         {% if task.scope_detail %}
             <span class="text-gray-400">({{ task.scope_detail }})</span>
@@ -50,6 +50,6 @@
 </tr>
 {% else %}
 <tr>
-    <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No tasks match your search.</td>
+    <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-300">No tasks match your search.</td>
 </tr>
 {% endfor %}

@@ -21,7 +21,7 @@
 
     <!-- Location Filter -->
     <div class="flex items-center gap-3">
-        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Location:</label>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Location:</label>
         <select id="location-filter" onchange="filterByLocation(this.value)"
                 class="text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-1.5 bg-white dark:bg-cc-card text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
             <option value="">All Locations</option>
@@ -39,7 +39,7 @@
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         <span class="badge badge-{{ status | lower | replace(' ', '-') | replace('/', '') }}">{{ status }}</span>
                     </h3>
-                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ items | length }}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-300">{{ items | length }}</span>
                 </div>
                 <div class="space-y-2 min-h-[200px] kanban-column" data-status="{{ status }}">
                     {% if filtered %}
@@ -55,7 +55,7 @@
                                 <span class="badge badge-{{ a.task.overall_status | lower | replace(' ', '-') }}">{{ a.task.overall_status }}</span>
                             </div>
                             {% if a.it_name %}
-                            <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">{{ a.it_name }}</div>
+                            <div class="mt-2 text-xs text-gray-500 dark:text-gray-300">{{ a.it_name }}</div>
                             {% endif %}
                         </div>
                         {% endfor %}
@@ -70,7 +70,7 @@
                             <div class="flex items-center justify-between">
                                 <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
                                 {% if task.target_date %}
-                                <span class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ task.target_date.strftime('%m/%d') }}</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-300 font-mono">{{ task.target_date.strftime('%m/%d') }}</span>
                                 {% endif %}
                             </div>
                             {% set task_assignments = task.assignments.all() %}
