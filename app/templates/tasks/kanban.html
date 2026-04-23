@@ -45,9 +45,9 @@
                     {% if filtered %}
                         {% for a in items %}
                         <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
-                             data-task-id="{{ a.task_id }}" data-assignment-id="{{ a.id }}">
-                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 cursor-pointer"
-                                 onclick="openDrawer('{{ url_for('tasks.drawer', id=a.task_id) }}')">
+                             data-task-id="{{ a.task_id }}" data-assignment-id="{{ a.id }}"
+                             onclick="openDrawer('{{ url_for('tasks.drawer', id=a.task_id) }}')">
+                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 {{ a.task.task_name }}
                             </div>
                             <div class="flex items-center justify-between">
@@ -62,9 +62,9 @@
                     {% else %}
                         {% for task in items %}
                         <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
-                             data-task-id="{{ task.id }}">
-                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 cursor-pointer"
-                                 onclick="openDrawer('{{ url_for('tasks.drawer', id=task.id) }}')">
+                             data-task-id="{{ task.id }}"
+                             onclick="openDrawer('{{ url_for('tasks.drawer', id=task.id) }}')">
+                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 {{ task.task_name }}
                             </div>
                             <div class="flex items-center justify-between">
