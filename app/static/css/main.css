@@ -189,3 +189,27 @@
 .progress-chain-complete {
     box-shadow: 0 0 8px rgba(64, 192, 87, 0.5);
 }
+
+/* === 堆叠进度条 === */
+.stacked-bar {
+    display: flex;
+    height: 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #e5e7eb;
+    min-width: 60px;
+    cursor: default;
+}
+.dark .stacked-bar {
+    background: #374151;
+}
+.sb-segment {
+    display: block;
+    height: 100%;
+    min-width: 3px;
+}
+.sb-completed  { background-color: #40c057; }
+.sb-in-progress { background-color: #228be6; }
+.sb-pending    { background-color: #6b7280; }
+.sb-blocked    { background-color: #fa5252; }
+.sb-na         { background-color: #4b5563; }

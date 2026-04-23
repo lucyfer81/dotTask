@@ -68,21 +68,32 @@
                            onclick="event.preventDefault(); openDrawer('{{ url_for('tasks.drawer', id=task.id) }}')">
                             {{ task.task_name }}
                         </a>
-                        {% set task_assignments = task.assignments.all() %}
-                        {% if task_assignments %}
-                        <div class="mt-1 flex flex-wrap gap-0.5">
-                            {% for a in task_assignments %}
-                            <span class="progress-dot progress-dot-{{ (a.local_status or 'pending') | lower | replace(' ', '-') | replace('/', '') }}"
-                                  title="{{ a.location.location_name }}"></span>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
                     </td>
                     <td class="px-4 py-3 text-sm">
                         <span class="badge badge-{{ task.task_priority | lower }}">{{ task.task_priority }}</span>
                     </td>
                     <td class="px-4 py-3 text-sm">
                         {% include "tasks/partials/status_menu.html" %}
+                        {% set task_assignments = task.assignments.all() %}
+                        {% if task_assignments | length > 1 %}
+                        {% set ns = namespace(completed=0, in_progress=0, pending=0, blocked=0, na=0) %}
+                        {% for a in task_assignments %}
+                            {% if a.local_status == 'Completed' %}{% set ns.completed = ns.completed + 1 %}
+                            {% elif a.local_status == 'In Progress' %}{% set ns.in_progress = ns.in_progress + 1 %}
+                            {% elif a.local_status == 'Pending' %}{% set ns.pending = ns.pending + 1 %}
+                            {% elif a.local_status == 'Blocked' %}{% set ns.blocked = ns.blocked + 1 %}
+                            {% else %}{% set ns.na = ns.na + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="stacked-bar mt-1" title="Completed: {{ ns.completed }} | In Progress: {{ ns.in_progress }} | Pending: {{ ns.pending }} | Blocked: {{ ns.blocked }}{% if ns.na > 0 %} | N/A: {{ ns.na }}{% endif %}">
+                            {% set total = task_assignments | length %}
+                            {% if ns.completed > 0 %}<span class="sb-segment sb-completed" style="width:{{ (ns.completed / total * 100) | round(1) }}%"></span>{% endif %}
+                            {% if ns.in_progress > 0 %}<span class="sb-segment sb-in-progress" style="width:{{ (ns.in_progress / total * 100) | round(1) }}%"></span>{% endif %}
+                            {% if ns.blocked > 0 %}<span class="sb-segment sb-blocked" style="width:{{ (ns.blocked / total * 100) | round(1) }}%"></span>{% endif %}
+                            {% if ns.pending > 0 %}<span class="sb-segment sb-pending" style="width:{{ (ns.pending / total * 100) | round(1) }}%"></span>{% endif %}
+                            {% if ns.na > 0 %}<span class="sb-segment sb-na" style="width:{{ (ns.na / total * 100) | round(1) }}%"></span>{% endif %}
+                        </div>
+                        {% endif %}
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ task.task_owner or '-' }}</td>
                     <td class="px-4 py-3 text-sm">
