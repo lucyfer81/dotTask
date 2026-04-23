@@ -58,21 +58,107 @@
     <div>
         <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Locations ({{ assignments | length }})</h3>
         {% if assignments %}
-        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
+        <div class="mb-3 flex gap-2">
+            <input type="text" id="drawer-loc-search" placeholder="Search..."
+                   class="flex-1 px-2 py-1 border border-gray-300 dark:border-cc-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+            <select id="drawer-loc-filter" class="text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                <option value="">All ({{ assignments | length }})</option>
+                {% for status_key, status_label, status_count in status_counts %}
+                <option value="{{ status_key }}">{{ status_label }} ({{ status_count }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="border border-gray-200 dark:border-cc-border rounded-lg divide-y divide-gray-200 dark:divide-cc-border max-h-[50vh] overflow-y-auto" id="drawer-loc-list">
             {% for a in assignments %}
-            <div class="border border-gray-200 dark:border-cc-border rounded-lg p-3">
-                <div class="flex items-center justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ a.location.location_name }}</span>
+            <div class="drawer-loc-row-wrapper" data-name="{{ a.location.location_name }}" data-status="{{ a.local_status or 'Pending' }}" data-id="{{ a.id }}">
+                <div class="loc-row" onclick="toggleDrawerAccordion(this)">
+                    <svg class="loc-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span class="loc-name">{{ a.location.location_name }}</span>
                     <span class="badge badge-{{ (a.local_status or 'pending') | lower | replace(' ', '-') }}">{{ a.local_status or 'Pending' }}</span>
                 </div>
-                {% if a.it_name %}
-                <span class="text-xs text-gray-500 dark:text-gray-400">{{ a.it_name }}</span>
-                {% endif %}
+                <div class="loc-detail">
+                    <div class="p-3">
+                        <form method="post" action="{{ url_for('tasks.update_assignment', task_id=task.id, assignment_id=a.id) }}" class="space-y-2">
+                            <div class="flex gap-2">
+                                <select name="local_status" class="flex-1 text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                    {% for ls in local_status_options %}
+                                    <option value="{{ ls }}" {% if (a.local_status or 'Pending') == ls %}selected{% endif %}>{{ ls }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="it_name" value="{{ a.it_name or '' }}" placeholder="IT person"
+                                    class="flex-1 text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                            </div>
+                            {% if a.task_log %}
+                            <div class="p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap max-h-24 overflow-y-auto border border-gray-200 dark:border-cc-border">{{ a.task_log }}</div>
+                            {% endif %}
+                            <div class="flex gap-2">
+                                <input type="text" name="task_log_entry" placeholder="Add log entry..."
+                                    class="flex-1 text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                <button type="submit" class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400" id="drawer-loc-count">Showing {{ assignments | length }} / {{ assignments | length }}</p>
         {% else %}
         <p class="text-sm text-gray-500 dark:text-gray-400">No assignments.</p>
         {% endif %}
     </div>
 </div>
+<script>
+// Drawer filtering
+(function() {
+    var searchInput = document.getElementById('drawer-loc-search');
+    var statusFilter = document.getElementById('drawer-loc-filter');
+    var locList = document.getElementById('drawer-loc-list');
+    var countDisplay = document.getElementById('drawer-loc-count');
+    if (!searchInput || !locList) return;
+
+    var rows = locList.querySelectorAll('.drawer-loc-row-wrapper');
+    var total = rows.length;
+
+    function filterDrawer() {
+        var search = searchInput.value.toLowerCase();
+        var status = statusFilter.value;
+        var visible = 0;
+        rows.forEach(function(row) {
+            var matchName = row.dataset.name.toLowerCase().indexOf(search) !== -1;
+            var matchStatus = !status || row.dataset.status.toLowerCase().replace(' ', '-') === status;
+            if (matchName && matchStatus) {
+                row.style.display = '';
+                visible++;
+            } else {
+                row.style.display = 'none';
+                if (row.classList.contains('expanded')) {
+                    row.classList.remove('expanded');
+                    row.querySelector('.loc-row').classList.remove('expanded');
+                }
+            }
+        });
+        if (countDisplay) {
+            countDisplay.textContent = 'Showing ' + visible + ' / ' + total;
+        }
+    }
+
+    searchInput.addEventListener('input', filterDrawer);
+    statusFilter.addEventListener('change', filterDrawer);
+})();
+
+function toggleDrawerAccordion(rowEl) {
+    var wrapper = rowEl.closest('.drawer-loc-row-wrapper');
+    var wasExpanded = wrapper.classList.contains('expanded');
+    document.querySelectorAll('.drawer-loc-row-wrapper.expanded').forEach(function(w) {
+        w.classList.remove('expanded');
+        w.querySelector('.loc-row').classList.remove('expanded');
+    });
+    if (!wasExpanded) {
+        wrapper.classList.add('expanded');
+        rowEl.classList.add('expanded');
+    }
+}
+</script>
