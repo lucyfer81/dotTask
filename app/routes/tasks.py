@@ -124,11 +124,19 @@ def detail(id):
     else:
         unassigned_locations = Location.query.filter_by(is_active=True).order_by(Location.location_name).all()
 
+    local_statuses = get_options("local_statuses")
+    status_counts = []
+    for s in local_statuses:
+        count = sum(1 for a in assignments if (a.local_status or "Pending") == s)
+        if count > 0:
+            key = s.lower().replace(" ", "-")
+            status_counts.append((key, s, count))
+
     return render_template(
         "tasks/detail.html", task=task, assignments=assignments,
         unassigned_locations=unassigned_locations,
         status_options=get_options("statuses"), priority_options=get_options("priorities"),
-        local_status_options=get_options("local_statuses"),
+        local_status_options=local_statuses, status_counts=status_counts,
     )
 
 
