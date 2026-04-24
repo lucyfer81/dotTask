@@ -62,6 +62,8 @@ function wbLoadContent() {
             swap: 'innerHTML',
             values: { location_id: locId, task_id: taskId }
         });
+    } else {
+        document.getElementById('wb-content').innerHTML = '<div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-8 text-center text-gray-400 dark:text-gray-500">Select a location and task above to begin.</div>';
     }
 }
 
