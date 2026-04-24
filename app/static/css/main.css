@@ -295,6 +295,13 @@
 .dark .loc-row-wrapper.expanded .loc-detail {
     border-top-color: #373a40;
 }
+.drawer-loc-row-wrapper.expanded .loc-detail {
+    max-height: 400px;
+    border-top: 1px solid #e5e7eb;
+}
+.dark .drawer-loc-row-wrapper.expanded .loc-detail {
+    border-top-color: #373a40;
+}
 .loc-filter-tab {
     display: inline-flex;
     align-items: center;
