@@ -1,4 +1,4 @@
 <option value="">-- Select --</option>
 {% for item in items %}
-<option value="{{ item[value_attr] }}">{{ item[label_attr] }}</option>
+<option value="{{ item[value_attr] }}" {% if current_id and item[value_attr] == current_id %}selected{% endif %}>{{ item[label_attr] }}</option>
 {% endfor %}

@@ -25,18 +25,19 @@ def index():
 def options():
     opt_type = request.args.get("type", "")
     filter_id = request.args.get("filter_id", type=int)
+    current_id = request.args.get("current_id", type=int)
 
     if opt_type == "task" and filter_id:
         assignments = TaskAssignment.query.filter_by(location_id=filter_id).all()
         task_ids = [a.task_id for a in assignments]
         tasks = Task.query.filter(Task.id.in_(task_ids)).order_by(Task.task_name).all() if task_ids else []
-        return render_template("workbench/partials/_options.html", items=tasks, value_attr="id", label_attr="task_name")
+        return render_template("workbench/partials/_options.html", items=tasks, value_attr="id", label_attr="task_name", current_id=current_id)
 
     if opt_type == "location" and filter_id:
         assignments = TaskAssignment.query.filter_by(task_id=filter_id).all()
         loc_ids = [a.location_id for a in assignments]
         locations = Location.query.filter(Location.id.in_(loc_ids)).order_by(Location.location_name).all() if loc_ids else []
-        return render_template("workbench/partials/_options.html", items=locations, value_attr="id", label_attr="location_name")
+        return render_template("workbench/partials/_options.html", items=locations, value_attr="id", label_attr="location_name", current_id=current_id)
 
     return ""
 

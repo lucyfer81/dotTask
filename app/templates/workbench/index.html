@@ -11,7 +11,7 @@
                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">Location</label>
                 <select id="wb-location" name="location_id"
                         hx-get="/workbench/options?type=task"
-                        hx-vals='js:{filter_id: document.getElementById("wb-location").value}'
+                        hx-vals='js:{filter_id: document.getElementById("wb-location").value, current_id: document.getElementById("wb-task").value}'
                         hx-target="#wb-task"
                         hx-swap="innerHTML"
                         hx-trigger="change"
@@ -27,7 +27,7 @@
                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">Task</label>
                 <select id="wb-task" name="task_id"
                         hx-get="/workbench/options?type=location"
-                        hx-vals='js:{filter_id: document.getElementById("wb-task").value}'
+                        hx-vals='js:{filter_id: document.getElementById("wb-task").value, current_id: document.getElementById("wb-location").value}'
                         hx-target="#wb-location"
                         hx-swap="innerHTML"
                         hx-trigger="change"
