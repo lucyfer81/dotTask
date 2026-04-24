@@ -30,6 +30,8 @@ def create_app():
     app.register_blueprint(locations.bp)
     from .routes import data_io
     app.register_blueprint(data_io.bp)
+    from .routes import workbench
+    app.register_blueprint(workbench.bp)
 
     return app
 
