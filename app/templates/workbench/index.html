@@ -3,8 +3,73 @@
 {% block title %}Workbench - APAC Task Manager{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Workbench</h1>
-    <p class="text-gray-500 dark:text-gray-300">Workbench is under construction.</p>
+<div class="space-y-4">
+    <!-- Top: Dual Pivot Selector -->
+    <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-4">
+        <div class="flex flex-wrap items-center gap-4">
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">Location</label>
+                <select id="wb-location" name="location_id"
+                        hx-get="/workbench/options?type=task"
+                        hx-vals='js:{filter_id: document.getElementById("wb-location").value}'
+                        hx-target="#wb-task"
+                        hx-swap="innerHTML"
+                        hx-trigger="change"
+                        onchange="setTimeout(function(){ wbLoadContent(); }, 50)"
+                        class="w-full text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-2 bg-white dark:bg-cc-card text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Select Location --</option>
+                    {% for loc in locations %}
+                    <option value="{{ loc.id }}">{{ loc.location_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">Task</label>
+                <select id="wb-task" name="task_id"
+                        hx-get="/workbench/options?type=location"
+                        hx-vals='js:{filter_id: document.getElementById("wb-task").value}'
+                        hx-target="#wb-location"
+                        hx-swap="innerHTML"
+                        hx-trigger="change"
+                        onchange="setTimeout(function(){ wbLoadContent(); }, 50)"
+                        class="w-full text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-2 bg-white dark:bg-cc-card text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Select Task --</option>
+                    {% for task in tasks %}
+                    <option value="{{ task.id }}">{{ task.task_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom: Dual Pane Content -->
+    <div id="wb-content">
+        <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-8 text-center text-gray-400 dark:text-gray-500">
+            Select a location and task above to begin.
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function wbLoadContent() {
+    var locId = document.getElementById('wb-location').value;
+    var taskId = document.getElementById('wb-task').value;
+    if (locId && taskId) {
+        htmx.ajax('GET', '/workbench/content', {
+            target: '#wb-content',
+            swap: 'innerHTML',
+            values: { location_id: locId, task_id: taskId }
+        });
+    }
+}
+
+document.body.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'wb-content') {
+        var textarea = document.getElementById('wb-log-input');
+        if (textarea) textarea.focus();
+    }
+});
+</script>
 {% endblock %}

@@ -1,0 +1,16 @@
+{% if parsed.entries %}
+<div>
+    <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wide mb-3">Timeline</h3>
+    <div class="relative pl-4 border-l-2 border-gray-200 dark:border-cc-border space-y-3">
+        {% for entry in parsed.entries %}
+        <div class="relative">
+            <div class="absolute -left-[1.3rem] top-1 w-2.5 h-2.5 rounded-full bg-blue-400 dark:bg-blue-500 border-2 border-white dark:border-cc-card"></div>
+            <div class="text-xs font-mono text-gray-400 dark:text-gray-500">{{ entry.timestamp }}</div>
+            {% if entry.content %}
+            <div class="text-sm text-gray-700 dark:text-gray-300 mt-0.5 whitespace-pre-wrap">{{ entry.content }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
