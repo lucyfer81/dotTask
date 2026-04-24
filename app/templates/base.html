@@ -23,6 +23,7 @@ tailwind.config = {
 }
 </script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
@@ -41,6 +42,7 @@ tailwind.config = {
                         <a href="/" class="nav-link {% if request.path == '/' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-300{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Dashboard</a>
                         <a href="/tasks" class="nav-link {% if request.path == '/tasks' or '/tasks/' in request.path and '/kanban' not in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-300{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Tasks</a>
                         <a href="/tasks/kanban" class="nav-link {% if '/kanban' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-300{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Kanban</a>
+                        <a href="/workbench" class="nav-link {% if '/workbench' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-300{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Workbench</a>
                         <a href="/locations" class="nav-link {% if '/location' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-300{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Locations</a>
                         <a href="/data" class="nav-link {% if '/data' in request.path %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-600 dark:text-gray-300{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400">Import / Export</a>
                     </div>
