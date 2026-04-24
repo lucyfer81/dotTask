@@ -31,11 +31,15 @@ def parse_task_log(text):
     current_entry = None
 
     for line in lines:
-        ts_match = re.match(r"^##\s*(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})", line)
+        # Match both formats:
+        #   ## 2026-04-24 14:30
+        #   [2026-04-23 12:17] content here
+        ts_match = re.match(r"^(?:##\s*|\[)(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})(?:\]\s*(.*))?$", line)
         if ts_match:
             if current_entry:
                 entries.append(current_entry)
-            current_entry = {"timestamp": ts_match.group(1), "content": ""}
+            inline = (ts_match.group(2) or "").strip()
+            current_entry = {"timestamp": ts_match.group(1), "content": inline}
             continue
 
         # Skip ## Action Items section header to avoid duplication on rebuild
