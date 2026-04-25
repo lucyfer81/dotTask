@@ -18,8 +18,8 @@
                 </svg>
                 Edit
             </a>
-            <form method="post" action="{{ url_for('tasks.delete', id=task.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete task &quot;{{ task.task_name }}&quot;? This action cannot be undone.')">
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700">
+            <form method="post" action="{{ url_for('tasks.delete', id=task.id) }}" class="inline">
+                <button type="button" onclick="Alpine.store('confirm').ask('Are you sure you want to delete task &quot;{{ task.task_name }}&quot;? This action cannot be undone.', this.closest('form'))" class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
@@ -40,7 +40,12 @@
     </div>
 
     <!-- Main Content: Two-column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"
+         x-data="locationFilter({ items: [
+             {% for a in assignments %}
+             { id: {{ a.id }}, name: '{{ a.location.location_name|e }}', status: '{{ (a.local_status or "Pending")|e }}' },
+             {% endfor %}
+         ]})">
         <!-- Left: Basic Info + Assignment List -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Basic Info -->
@@ -148,12 +153,18 @@
                 {% if assignments %}
                 <!-- Search & Filter -->
                 <div class="mb-4 space-y-3">
-                    <input type="text" id="loc-search" placeholder="Search location name..."
+                    <input type="text" x-model="search" placeholder="Search location name..."
                            class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
-                    <div class="flex flex-wrap gap-2" id="loc-filter-tabs">
-                        <button class="loc-filter-tab active" data-filter="">All <span class="loc-filter-count">({{ assignments | length }})</span></button>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="loc-filter-tab" :class="{ 'active': filter === '' }"
+                                @click="filter = ''">
+                            All <span class="loc-filter-count">({{ assignments | length }})</span>
+                        </button>
                         {% for status_key, status_label, status_count in status_counts %}
-                        <button class="loc-filter-tab" data-filter="{{ status_key }}">{{ status_label }} <span class="loc-filter-count">({{ status_count }})</span></button>
+                        <button class="loc-filter-tab" :class="{ 'active': filter === '{{ status_key }}' }"
+                                @click="filter = '{{ status_key }}'">
+                            {{ status_label }} <span class="loc-filter-count">({{ status_count }})</span>
+                        </button>
                         {% endfor %}
                     </div>
                 </div>
@@ -161,16 +172,17 @@
                 <!-- Compact Location List -->
                 <div class="border border-gray-200 dark:border-cc-border rounded-lg divide-y divide-gray-200 dark:divide-cc-border" id="loc-list">
                     {% for assignment in assignments %}
-                    <div class="loc-row-wrapper" data-name="{{ assignment.location.location_name }}" data-status="{{ assignment.local_status or 'Pending' }}" data-id="{{ assignment.id }}">
-                        <div class="loc-row" onclick="toggleAccordion(this)">
+                    <div class="loc-row-wrapper" x-show="matches({ id: {{ assignment.id }}, name: '{{ assignment.location.location_name|e }}', status: '{{ (assignment.local_status or "Pending")|e }}' })"
+                         :class="{ 'expanded': expandedId === {{ assignment.id }} }">
+                        <div class="loc-row" @click="toggle({{ assignment.id }})">
                             <svg class="loc-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                             <span class="loc-name">{{ assignment.location.location_name }}</span>
                             <span class="badge badge-{{ (assignment.local_status or 'pending') | lower | replace(' ', '-') }}">{{ assignment.local_status or 'Pending' }}</span>
                             <span class="loc-it">{{ assignment.it_name or '' }}</span>
-                            <form method="post" action="{{ url_for('tasks.remove_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="loc-remove-btn inline" onclick="event.stopPropagation()" onsubmit="return confirm('Remove this assignment?')">
-                                <button type="submit" class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 px-1">Remove</button>
+                            <form method="post" action="{{ url_for('tasks.remove_assignment', task_id=task.id, assignment_id=assignment.id) }}" class="loc-remove-btn inline">
+                                <button type="button" onclick="event.stopPropagation(); Alpine.store('confirm').ask('Remove this assignment?', this.closest('form'))" class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 px-1">Remove</button>
                             </form>
                         </div>
                         <div class="loc-detail">
@@ -207,7 +219,7 @@
                     {% endfor %}
                 </div>
 
-                <p class="mt-3 text-xs text-gray-500 dark:text-gray-300" id="loc-count">Showing {{ assignments | length }} / {{ assignments | length }} locations</p>
+                <p class="mt-3 text-xs text-gray-500 dark:text-gray-300" x-text="'Showing ' + visibleCount + ' / ' + items.length + ' locations'"></p>
                 {% else %}
                 <p class="text-sm text-gray-500 dark:text-gray-300 py-4">No assignments yet.</p>
                 {% endif %}
@@ -259,31 +271,36 @@
                         {% endif %}
                     {% endfor %}
 
-                    <div class="flex items-center justify-between progress-clickable" data-filter="completed" onclick="filterByStatus('completed')">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'completed' }"
+                         @click="filter = 'completed'; expandedId = null">
                         <span class="text-sm text-gray-600 dark:text-gray-300">
                             <span class="badge badge-completed">Completed</span>
                         </span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.completed }}</span>
                     </div>
-                    <div class="flex items-center justify-between progress-clickable" data-filter="in-progress" onclick="filterByStatus('in-progress')">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'in-progress' }"
+                         @click="filter = 'in-progress'; expandedId = null">
                         <span class="text-sm text-gray-600 dark:text-gray-300">
                             <span class="badge badge-in-progress">In Progress</span>
                         </span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.in_progress }}</span>
                     </div>
-                    <div class="flex items-center justify-between progress-clickable" data-filter="pending" onclick="filterByStatus('pending')">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'pending' }"
+                         @click="filter = 'pending'; expandedId = null">
                         <span class="text-sm text-gray-600 dark:text-gray-300">
                             <span class="badge badge-pending">Pending</span>
                         </span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.pending }}</span>
                     </div>
-                    <div class="flex items-center justify-between progress-clickable" data-filter="blocked" onclick="filterByStatus('blocked')">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'blocked' }"
+                         @click="filter = 'blocked'; expandedId = null">
                         <span class="text-sm text-gray-600 dark:text-gray-300">
                             <span class="badge badge-blocked">Blocked</span>
                         </span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.blocked }}</span>
                     </div>
-                    <div class="flex items-center justify-between progress-clickable" data-filter="na" onclick="filterByStatus('na')">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'na' }"
+                         @click="filter = 'na'; expandedId = null">
                         <span class="text-sm text-gray-600 dark:text-gray-300">
                             <span class="badge badge-na">N/A</span>
                         </span>
@@ -331,97 +348,41 @@
 
 {% block extra_js %}
 <script>
-(function() {
-    var searchInput = document.getElementById('loc-search');
-    var filterTabs = document.getElementById('loc-filter-tabs');
-    var locList = document.getElementById('loc-list');
-    var countDisplay = document.getElementById('loc-count');
-    if (!searchInput || !locList) return;
-
-    var rows = locList.querySelectorAll('.loc-row-wrapper');
-    var activeFilter = '';
-    var total = rows.length;
-
-    function filterLocations() {
-        var search = searchInput.value.toLowerCase();
-        var visible = 0;
-        rows.forEach(function(row) {
-            var matchName = row.dataset.name.toLowerCase().indexOf(search) !== -1;
-            var matchStatus = !activeFilter || row.dataset.status.toLowerCase().replace(' ', '-') === activeFilter;
-            if (matchName && matchStatus) {
-                row.style.display = '';
-                visible++;
-            } else {
-                row.style.display = 'none';
-                if (row.classList.contains('expanded')) {
-                    row.classList.remove('expanded');
-                    row.querySelector('.loc-row').classList.remove('expanded');
+function locationFilter(config) {
+    return {
+        search: '',
+        filter: '',
+        expandedId: null,
+        items: config.items,
+        matches(item) {
+            var matchName = !this.search || item.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1;
+            var matchStatus = !this.filter || item.status.toLowerCase().replace(' ', '-') === this.filter;
+            return matchName && matchStatus;
+        },
+        toggle(id) {
+            this.expandedId = this.expandedId === id ? null : id;
+        },
+        get visibleCount() {
+            var self = this;
+            return this.items.filter(function(i) { return self.matches(i); }).length;
+        },
+        init() {
+            var hash = window.location.hash;
+            if (hash && hash.startsWith('#assignment-')) {
+                var id = parseInt(hash.substring('#assignment-'.length));
+                var found = this.items.find(function(i) { return i.id === id; });
+                if (found) {
+                    this.expandedId = id;
+                    var self = this;
+                    setTimeout(function() {
+                        var el = document.querySelector('.loc-row-wrapper[data-id="' + id + '"]');
+                        if (!el) el = document.querySelector('.loc-row-wrapper[x-show]');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
                 }
             }
-        });
-        if (countDisplay) {
-            countDisplay.textContent = 'Showing ' + visible + ' / ' + total + ' locations';
         }
-    }
-
-    searchInput.addEventListener('input', filterLocations);
-
-    if (filterTabs) {
-        filterTabs.addEventListener('click', function(e) {
-            var tab = e.target.closest('.loc-filter-tab');
-            if (!tab) return;
-            filterTabs.querySelectorAll('.loc-filter-tab').forEach(function(t) { t.classList.remove('active'); });
-            tab.classList.add('active');
-            activeFilter = tab.dataset.filter;
-            filterLocations();
-            document.querySelectorAll('.progress-clickable').forEach(function(el) {
-                el.classList.toggle('highlighted', el.dataset.filter === activeFilter && activeFilter !== '');
-            });
-        });
-    }
-
-    window.filterByStatus = function(statusKey) {
-        activeFilter = statusKey;
-        if (filterTabs) {
-            filterTabs.querySelectorAll('.loc-filter-tab').forEach(function(t) {
-                t.classList.toggle('active', t.dataset.filter === statusKey);
-            });
-        }
-        if (searchInput) searchInput.value = '';
-        filterLocations();
-        locList.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        document.querySelectorAll('.progress-clickable').forEach(function(el) {
-            el.classList.toggle('highlighted', el.dataset.filter === statusKey);
-        });
     };
-})();
-
-function toggleAccordion(rowEl) {
-    var wrapper = rowEl.closest('.loc-row-wrapper');
-    var wasExpanded = wrapper.classList.contains('expanded');
-    document.querySelectorAll('.loc-row-wrapper.expanded').forEach(function(w) {
-        w.classList.remove('expanded');
-        w.querySelector('.loc-row').classList.remove('expanded');
-    });
-    if (!wasExpanded) {
-        wrapper.classList.add('expanded');
-        rowEl.classList.add('expanded');
-    }
 }
-
-(function() {
-    var hash = window.location.hash;
-    if (hash && hash.startsWith('#assignment-')) {
-        var id = hash.substring('#assignment-'.length);
-        var target = document.querySelector('.loc-row-wrapper[data-id="' + id + '"]');
-        if (target) {
-            target.classList.add('expanded');
-            target.querySelector('.loc-row').classList.add('expanded');
-            setTimeout(function() {
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-        }
-    }
-})();
 </script>
 {% endblock %}

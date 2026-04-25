@@ -71,8 +71,8 @@
                                 {{ 'Deactivate' if loc.is_active else 'Activate' }}
                             </button>
                         </form>
-                        <form method="post" action="{{ url_for('locations.delete', id=loc.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete location {{ loc.location_name }}?')">
-                            <button type="submit" class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded hover:bg-red-100 dark:hover:bg-red-900/50">Delete</button>
+                        <form method="post" action="{{ url_for('locations.delete', id=loc.id) }}" class="inline">
+                            <button type="button" onclick="Alpine.store('confirm').ask('Are you sure you want to delete location {{ loc.location_name }}?', this.closest('form'))" class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded hover:bg-red-100 dark:hover:bg-red-900/50">Delete</button>
                         </form>
                     </td>
                 </tr>

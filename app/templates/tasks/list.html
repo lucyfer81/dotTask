@@ -143,8 +143,8 @@
                     <td class="px-4 py-3 text-sm text-right space-x-1">
                         <a href="{{ url_for('tasks.detail', id=task.id) }}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded hover:bg-blue-100 dark:hover:bg-blue-900/50">Detail</a>
                         <a href="{{ url_for('tasks.edit', id=task.id) }}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 rounded hover:bg-yellow-100 dark:hover:bg-yellow-900/50">Edit</a>
-                        <form method="post" action="{{ url_for('tasks.delete', id=task.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete task &quot;{{ task.task_name }}&quot;?')">
-                            <button type="submit" class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded hover:bg-red-100 dark:hover:bg-red-900/50">Delete</button>
+                        <form method="post" action="{{ url_for('tasks.delete', id=task.id) }}" class="inline">
+                            <button type="button" onclick="Alpine.store('confirm').ask('Are you sure you want to delete task &quot;{{ task.task_name }}&quot;?', this.closest('form'))" class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded hover:bg-red-100 dark:hover:bg-red-900/50">Delete</button>
                         </form>
                     </td>
                 </tr>
