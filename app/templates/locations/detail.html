@@ -39,8 +39,13 @@
         </div>
     </div>
 
-    <!-- Main Content: Two-column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content: Two-column Layout (Alpine.js enhanced) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"
+         x-data="assignmentFilter({ items: [
+             {% for a in assignments %}
+             { id: {{ a.id }}, name: '{{ a.task.task_name|e }}', status: '{{ (a.local_status or "Pending")|e }}', priority: '{{ a.task.task_priority|e }}' },
+             {% endfor %}
+         ]})">
         <!-- Left: Basic Info + Task Assignment List -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Basic Info -->
@@ -63,13 +68,32 @@
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Region</dt>
                         <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ location.region or '-' }}</dd>
                     </div>
-                    <div>
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">IT Manager</dt>
-                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ location.it_manager or '-' }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Primary IT Contact</dt>
-                        <dd class="text-sm text-gray-900 dark:text-gray-100 mt-1">{{ location.primary_it_contact or '-' }}</dd>
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">IT Contacts</dt>
+                        {% if location.it_contacts %}
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200 dark:border-cc-border">
+                                    <th class="text-left py-1 pr-3 text-xs font-medium text-gray-500 dark:text-gray-300">Name</th>
+                                    <th class="text-left py-1 pr-3 text-xs font-medium text-gray-500 dark:text-gray-300">Role</th>
+                                    <th class="text-left py-1 pr-3 text-xs font-medium text-gray-500 dark:text-gray-300">Email</th>
+                                    <th class="text-left py-1 text-xs font-medium text-gray-500 dark:text-gray-300">Phone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in location.it_contacts %}
+                                <tr class="border-b border-gray-100 dark:border-gray-700">
+                                    <td class="py-1.5 pr-3 text-gray-900 dark:text-gray-100">{{ c.name or '-' }}</td>
+                                    <td class="py-1.5 pr-3"><span class="badge badge-in-progress">{{ c.role or '-' }}</span></td>
+                                    <td class="py-1.5 pr-3 text-gray-900 dark:text-gray-100">{{ c.email or '-' }}</td>
+                                    <td class="py-1.5 text-gray-900 dark:text-gray-100">{{ c.phone or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <dd class="text-sm text-gray-500">-</dd>
+                        {% endif %}
                     </div>
                     {% if location.comments %}
                     <div class="sm:col-span-2">
@@ -88,9 +112,28 @@
                 </h2>
 
                 {% if assignments %}
+                <!-- Search & Filter -->
+                <div class="mb-4 space-y-3">
+                    <input type="text" x-model="search" placeholder="Search task name..."
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                    <div class="flex flex-wrap gap-2">
+                        <button class="loc-filter-tab" :class="{ 'active': filter === '' }"
+                                @click="filter = ''">
+                            All <span class="loc-filter-count">({{ assignments | length }})</span>
+                        </button>
+                        {% for status_key, status_label, status_count in status_counts %}
+                        <button class="loc-filter-tab" :class="{ 'active': filter === '{{ status_key }}' }"
+                                @click="filter = '{{ status_key }}'">
+                            {{ status_label }} <span class="loc-filter-count">({{ status_count }})</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <div class="space-y-4">
                     {% for assignment in assignments %}
-                    <div class="border border-gray-200 dark:border-cc-border rounded-lg p-4">
+                    <div class="border border-gray-200 dark:border-cc-border rounded-lg p-4"
+                         x-show="matches({ id: {{ assignment.id }}, name: '{{ assignment.task.task_name|e }}', status: '{{ (assignment.local_status or "Pending")|e }}' })">
                         <div class="flex items-center justify-between mb-3">
                             <a href="{{ url_for('tasks.detail', id=assignment.task.id) }}" class="text-sm font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ assignment.task.task_name }}</a>
                             <form method="post" action="{{ url_for('locations.remove_assignment', loc_id=location.id, assignment_id=assignment.id) }}" class="inline">
@@ -130,6 +173,8 @@
                     </div>
                     {% endfor %}
                 </div>
+
+                <p class="mt-3 text-xs text-gray-500 dark:text-gray-300" x-text="'Showing ' + visibleCount + ' / ' + items.length + ' tasks'"></p>
                 {% else %}
                 <p class="text-sm text-gray-500 dark:text-gray-300 py-4">No task assignments yet.</p>
                 {% endif %}
@@ -181,23 +226,28 @@
                         {% endif %}
                     {% endfor %}
 
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'completed' }"
+                         @click="filter = 'completed'">
                         <span class="text-sm text-gray-600 dark:text-gray-300"><span class="badge badge-completed">Completed</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.completed }}</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'in-progress' }"
+                         @click="filter = 'in-progress'">
                         <span class="text-sm text-gray-600 dark:text-gray-300"><span class="badge badge-in-progress">In Progress</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.in_progress }}</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'pending' }"
+                         @click="filter = 'pending'">
                         <span class="text-sm text-gray-600 dark:text-gray-300"><span class="badge badge-pending">Pending</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.pending }}</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'blocked' }"
+                         @click="filter = 'blocked'">
                         <span class="text-sm text-gray-600 dark:text-gray-300"><span class="badge badge-blocked">Blocked</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.blocked }}</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between progress-clickable" :class="{ 'highlighted': filter === 'na' }"
+                         @click="filter = 'na'">
                         <span class="text-sm text-gray-600 dark:text-gray-300"><span class="badge badge-na">N/A</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ ns.na }}</span>
                     </div>
@@ -239,4 +289,25 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function assignmentFilter(config) {
+    return {
+        search: '',
+        filter: '',
+        items: config.items,
+        matches(item) {
+            var matchName = !this.search || item.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1;
+            var matchStatus = !this.filter || item.status.toLowerCase().replace(' ', '-') === this.filter;
+            return matchName && matchStatus;
+        },
+        get visibleCount() {
+            var self = this;
+            return this.items.filter(function(i) { return self.matches(i); }).length;
+        }
+    };
+}
+</script>
 {% endblock %}
