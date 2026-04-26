@@ -8,3 +8,4 @@ flask.log
 *.png
 APAC_Infra_Task_List.xlsx
 CLAUDE.md
+node_modules/
