@@ -2,10 +2,27 @@ from datetime import date
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
-from app.models import Location, TaskAssignment, Task
+from app.models import Location, TaskAssignment, Task, ItContact
 from app.dropdowns import get_options
 
 bp = Blueprint("locations", __name__, url_prefix="/locations")
+
+
+def _save_contacts(location_id):
+    ItContact.query.filter_by(location_id=location_id).delete()
+    names = request.form.getlist("contact_name")
+    roles = request.form.getlist("contact_role")
+    emails = request.form.getlist("contact_email")
+    phones = request.form.getlist("contact_phone")
+    for i in range(len(names)):
+        if names[i].strip():
+            db.session.add(ItContact(
+                location_id=location_id,
+                name=names[i].strip(),
+                role=roles[i] if i < len(roles) else "",
+                email=emails[i] if i < len(emails) else "",
+                phone=phones[i] if i < len(phones) else "",
+            ))
 
 
 @bp.route("/")
@@ -50,10 +67,22 @@ def detail(id):
     else:
         unassigned_tasks = Task.query.order_by(Task.task_name).all()
 
+    # Compute status counts for filter tabs
+    from collections import Counter
+    status_counter = Counter(a.local_status or "Pending" for a in assignments)
+    status_label_map = {"Pending": "Pending", "In Progress": "In Progress",
+                        "Completed": "Completed", "Blocked": "Blocked", "N/A": "N/A"}
+    status_counts = [
+        (k.lower().replace(" ", "-"), status_label_map.get(k, k), status_counter.get(k, 0))
+        for k in ["Completed", "In Progress", "Pending", "Blocked", "N/A"]
+        if status_counter.get(k, 0) > 0
+    ]
+
     return render_template(
         "locations/detail.html", location=loc, assignments=assignments,
         unassigned_tasks=unassigned_tasks,
         local_status_options=get_options("local_statuses"),
+        status_counts=status_counts,
     )
 
 
@@ -116,16 +145,21 @@ def create():
             location_type=request.form.get("location_type", ""),
             region=request.form.get("region", ""),
             is_active=request.form.get("is_active") == "on",
-            it_manager=request.form.get("it_manager", ""),
-            primary_it_contact=request.form.get("primary_it_contact", ""),
             comments=request.form.get("comments", ""),
         )
         db.session.add(loc)
+        db.session.flush()
+        _save_contacts(loc.id)
         db.session.commit()
         flash("Location created", "success")
         return redirect(url_for("locations.list"))
 
-    return render_template("locations/form.html", location=None, countries=get_options("countries"), location_types=get_options("location_types"))
+    return render_template(
+        "locations/form.html", location=None,
+        countries=get_options("countries"),
+        location_types=get_options("location_types"),
+        it_roles=get_options("it_roles"),
+    )
 
 
 @bp.route("/<int:id>/edit", methods=["GET", "POST"])
@@ -138,14 +172,18 @@ def edit(id):
         loc.location_type = request.form.get("location_type", "")
         loc.region = request.form.get("region", "")
         loc.is_active = request.form.get("is_active") == "on"
-        loc.it_manager = request.form.get("it_manager", "")
-        loc.primary_it_contact = request.form.get("primary_it_contact", "")
         loc.comments = request.form.get("comments", "")
+        _save_contacts(loc.id)
         db.session.commit()
         flash("Location updated", "success")
         return redirect(url_for("locations.list"))
 
-    return render_template("locations/form.html", location=loc, countries=get_options("countries"), location_types=get_options("location_types"))
+    return render_template(
+        "locations/form.html", location=loc,
+        countries=get_options("countries"),
+        location_types=get_options("location_types"),
+        it_roles=get_options("it_roles"),
+    )
 
 
 @bp.route("/<int:id>/delete", methods=["POST"])
