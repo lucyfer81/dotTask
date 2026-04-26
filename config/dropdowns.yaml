@@ -40,3 +40,14 @@ local_statuses:
   - Completed
   - Blocked
   - Cancelled
+
+it_roles:
+  - IT Manager
+  - IT Coordinator
+  - Network Admin
+  - System Admin
+  - Security
+  - Infrastructure
+  - Helpdesk
+  - Application Support
+  - Other

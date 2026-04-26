@@ -24,9 +24,24 @@ class Location(db.Model):
     )
 
     assignments = db.relationship("TaskAssignment", backref="location", lazy="dynamic")
+    it_contacts = db.relationship("ItContact", backref="location", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Location {self.location_name}>"
+
+
+class ItContact(db.Model):
+    __tablename__ = "it_contact"
+
+    id = db.Column(db.Integer, primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey("location_master.id"), nullable=False)
+    name = db.Column(db.String(200))
+    role = db.Column(db.String(100))
+    email = db.Column(db.String(200))
+    phone = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f"<ItContact {self.name}>"
 
 
 class Task(db.Model):

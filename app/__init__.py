@@ -61,3 +61,24 @@ def _migrate_db(db):
                 "ALTER TABLE location_master ADD COLUMN comments TEXT"
             ))
             conn.commit()
+
+        # Migrate it_manager / primary_it_contact → it_contact rows
+        result = conn.execute(sqlalchemy.text(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='it_contact'"
+        ))
+        if result.fetchone():
+            from app.models import Location, ItContact
+            locations = Location.query.all()
+            for loc in locations:
+                existing = ItContact.query.filter_by(location_id=loc.id).count()
+                if existing > 0:
+                    continue
+                if loc.it_manager:
+                    conn.execute(sqlalchemy.text(
+                        "INSERT INTO it_contact (location_id, name, role) VALUES (:lid, :name, :role)"
+                    ), {"lid": loc.id, "name": loc.it_manager, "role": "IT Manager"})
+                if loc.primary_it_contact:
+                    conn.execute(sqlalchemy.text(
+                        "INSERT INTO it_contact (location_id, name, role) VALUES (:lid, :name, :role)"
+                    ), {"lid": loc.id, "name": loc.primary_it_contact, "role": "IT Coordinator"})
+            conn.commit()
