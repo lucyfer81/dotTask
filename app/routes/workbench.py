@@ -3,6 +3,7 @@ from datetime import date
 from app.models import Location, Task, TaskAssignment
 from app import db
 from app.services.task_log_parser import parse_task_log, add_log_entry, toggle_checklist_item
+from app.services.status_engine import sync_overall_status
 from app.dropdowns import get_options
 
 bp = Blueprint("workbench", __name__, url_prefix="/workbench")
@@ -115,6 +116,7 @@ def update_status():
         assignment.last_update = date.today()
         status_msg = f"Status changed: {old_status} → {new_status}"
         assignment.task_log = add_log_entry(assignment.task_log, status_msg)
+        sync_overall_status(assignment.task)
         db.session.commit()
 
     parsed = parse_task_log(assignment.task_log)

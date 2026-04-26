@@ -19,19 +19,31 @@
         </div>
     </div>
 
-    <!-- Location Filter -->
-    <div class="flex items-center gap-3">
+    <!-- Location Filter (Alpine + htmx) -->
+    <div x-data="kanbanFilter({ initialLocId: '{{ location.id if filtered else '' }}' })" class="flex items-center gap-3">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Location:</label>
-        <select id="location-filter" onchange="filterByLocation(this.value)"
+        <select x-model="locId" @change="filterLocation()"
                 class="text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-1.5 bg-white dark:bg-cc-card text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
             <option value="">All Locations</option>
             {% for loc in locations %}
-            <option value="{{ loc.id }}" {% if filtered and location.id == loc.id %}selected{% endif %}>{{ loc.location_name }}</option>
+            <option value="{{ loc.id }}">{{ loc.location_name }}</option>
             {% endfor %}
         </select>
+        <div id="kanban-loading" class="htmx-indicator flex items-center gap-1 text-xs text-gray-500">
+            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            Loading...
+        </div>
     </div>
 
-    <div class="flex gap-4 overflow-x-auto pb-4" id="kanban-board">
+    <div class="flex gap-4 overflow-x-auto pb-4" id="kanban-board"
+         hx-get="{{ url_for('tasks.kanban') }}"
+         hx-trigger="kanbanRefresh from:body"
+         hx-target="#kanban-board"
+         hx-swap="outerHTML"
+         hx-indicator="#kanban-loading">
         {% for status, items in columns.items() %}
         <div class="flex-shrink-0 w-72">
             <div class="bg-gray-100 dark:bg-cc-bg rounded-lg p-3">
@@ -44,7 +56,7 @@
                 <div class="space-y-2 min-h-[200px] kanban-column" data-status="{{ status }}">
                     {% if filtered %}
                         {% for a in items %}
-                        <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
+                        <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover transition-transform duration-150"
                              data-task-id="{{ a.task_id }}" data-assignment-id="{{ a.id }}"
                              onclick="window.location.href='/tasks/{{ a.task_id }}'">
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -61,7 +73,7 @@
                         {% endfor %}
                     {% else %}
                         {% for task in items %}
-                        <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
+                        <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover transition-transform duration-150"
                              data-task-id="{{ task.id }}"
                              onclick="window.location.href='/tasks/{{ task.id }}'">
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -95,36 +107,39 @@
 
 {% block extra_js %}
 <script>
+function kanbanFilter(config) {
+    return {
+        locId: config.initialLocId,
+        filterLocation() {
+            var url = this.locId
+                ? '/tasks/kanban?location_id=' + this.locId
+                : '/tasks/kanban';
+            htmx.ajax('GET', url, { target: '#kanban-board', swap: 'outerHTML' });
+        }
+    };
+}
+
 var isFiltered = {{ 'true' if filtered else 'false' }};
 var locationId = {{ location.id if filtered else 'null' }};
 
-function filterByLocation(locId) {
-    if (locId) {
-        window.location.href = '/tasks/kanban?location_id=' + locId;
-    } else {
-        window.location.href = '/tasks/kanban';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
+function initSortable() {
     document.querySelectorAll('.kanban-column').forEach(function(col) {
-        new Sortable(col, {
-            group: 'kanban',
+        if (col._sortable) return;
+        col._sortable = new Sortable(col, {
+            group: isFiltered ? 'kanban' : false,
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
             animation: 200,
+            sort: isFiltered,
             onEnd: function(evt) {
+                if (!isFiltered) return;
                 var taskId = evt.item.dataset.taskId;
                 var newStatus = evt.to.dataset.status;
-                if (isFiltered && locationId) {
+                evt.item.classList.add('ring-2', 'ring-blue-400');
+                setTimeout(function() { evt.item.classList.remove('ring-2', 'ring-blue-400'); }, 800);
+                if (locationId) {
                     htmx.ajax('POST', '/tasks/' + taskId + '/status', {
                         values: { local_status: newStatus, location_id: locationId },
-                        target: 'body',
-                        swap: 'none'
-                    });
-                } else {
-                    htmx.ajax('POST', '/tasks/' + taskId + '/status', {
-                        values: { overall_status: newStatus },
                         target: 'body',
                         swap: 'none'
                     });
@@ -132,6 +147,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+}
+document.addEventListener('DOMContentLoaded', initSortable);
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.target.id === 'kanban-board') initSortable();
 });
 </script>
 {% endblock %}

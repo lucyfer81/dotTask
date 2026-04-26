@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app import db
 from app.models import Task, TaskAssignment, Location
 from app.services.scope_engine import get_scope_preview, get_distinct_countries
+from app.services.status_engine import sync_overall_status
 from app.dropdowns import get_options
 
 bp = Blueprint("tasks", __name__, url_prefix="/tasks")
@@ -152,7 +153,6 @@ def edit(id):
         task.scope_location_type = request.form.get("scope_location_type", "") or None
         task.task_owner = request.form.get("task_owner", "")
         task.execution_model = request.form.get("execution_model", "")
-        task.overall_status = request.form.get("overall_status", "Not Started")
         task.start_date = _parse_date(request.form.get("start_date"))
         task.target_date = _parse_date(request.form.get("target_date"))
         task.last_update = date.today()
@@ -189,6 +189,7 @@ def update_status(id):
         if new_status in get_options("local_statuses"):
             assignment.local_status = new_status
             assignment.last_update = date.today()
+            sync_overall_status(assignment.task)
             db.session.commit()
         return redirect(request.headers.get("Referer", url_for("tasks.kanban", location_id=loc_id)))
 
@@ -220,6 +221,7 @@ def assign_location(id):
                 local_responsibility=request.form.get("local_responsibility", ""),
             )
             db.session.add(assignment)
+            sync_overall_status(task)
             db.session.commit()
             flash("Location assigned", "success")
     return redirect(url_for("tasks.detail", id=id))
@@ -239,6 +241,7 @@ def update_assignment(task_id, assignment_id):
             assignment.task_log = entry
     assignment.it_name = request.form.get("it_name", assignment.it_name or "")
     assignment.last_update = date.today()
+    sync_overall_status(assignment.task)
     db.session.commit()
     flash("Assignment updated", "success")
     return redirect(url_for("tasks.detail", id=task_id) + f"#assignment-{assignment_id}")
@@ -247,6 +250,8 @@ def update_assignment(task_id, assignment_id):
 @bp.route("/<int:task_id>/assignment/<int:assignment_id>/delete", methods=["POST"])
 def remove_assignment(task_id, assignment_id):
     assignment = TaskAssignment.query.get_or_404(assignment_id)
+    task = assignment.task
+    sync_overall_status(task)
     db.session.delete(assignment)
     db.session.commit()
     flash("Assignment removed", "success")

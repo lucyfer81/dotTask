@@ -15,7 +15,8 @@
     </div>
 
     <!-- Form -->
-    <form method="post" class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6">
+    <form method="post" class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6"
+          x-data="formDraft('draft-task-{{ task.id if task else 'new' }}')">
         <!-- Basic Info -->
         <div class="mb-8">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">Basic Info</h2>
@@ -56,12 +57,12 @@
         </div>
 
         <!-- Assignment Scope -->
-        <div class="mb-8">
+        <div class="mb-8" x-data="locationSelector()" x-init="init()">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">Assignment Scope</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                    <label for="scope_country" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country</label>
-                    <select id="scope_country" name="scope_country"
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country</label>
+                    <select x-model="country" @change="loadLocations()" name="scope_country"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
                         <option value="">-- All Countries --</option>
                         {% for c in countries %}
@@ -70,8 +71,8 @@
                     </select>
                 </div>
                 <div>
-                    <label for="scope_location_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location Type</label>
-                    <select id="scope_location_type" name="scope_location_type"
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location Type</label>
+                    <select x-model="locationType" @change="loadLocations()" name="scope_location_type"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
                         <option value="">-- All Types --</option>
                         {% for t in location_types %}
@@ -82,16 +83,31 @@
             </div>
 
             <!-- Location Checkbox List -->
-            <div id="scope-locations" class="border border-gray-200 dark:border-cc-border rounded-md max-h-80 overflow-y-auto">
+            <div class="border border-gray-200 dark:border-cc-border rounded-md max-h-80 overflow-y-auto">
                 <div class="p-3 bg-gray-50 dark:bg-cc-bg border-b border-gray-200 dark:border-cc-border flex items-center gap-3">
                     <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
-                        <input type="checkbox" id="select-all-locations" class="rounded border-gray-300 dark:border-cc-border text-blue-600 focus:ring-blue-500">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll($event.target.checked)"
+                               class="rounded border-gray-300 dark:border-cc-border text-blue-600 focus:ring-blue-500">
                         Select All
                     </label>
-                    <span id="location-count" class="text-sm text-gray-500 dark:text-gray-300">0 locations</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-300" x-text="locations.length + ' locations'"></span>
                 </div>
                 <div id="location-checkboxes" class="divide-y divide-gray-100 dark:divide-cc-border">
-                    <p class="text-sm text-gray-400 dark:text-gray-400 p-4">Loading locations...</p>
+                    <template x-if="locations.length === 0">
+                        <p class="text-sm text-gray-400 p-4">No matching locations</p>
+                    </template>
+                    <template x-for="loc in locations" :key="loc.id">
+                        <label class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                            <input type="checkbox" name="selected_locations" :value="loc.id"
+                                   :checked="selectedIds.includes(loc.id)"
+                                   @change="toggleLocation(loc.id)"
+                                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <div>
+                                <span class="text-sm text-gray-900 dark:text-gray-100" x-text="loc.name"></span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2" x-text="(loc.country || '') + ' / ' + (loc.type || '')"></span>
+                            </div>
+                        </label>
+                    </template>
                 </div>
             </div>
         </div>
@@ -101,13 +117,15 @@
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">Status & Dates</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
-                    <label for="overall_status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Overall Status</label>
-                    <select id="overall_status" name="overall_status"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
-                        {% for s in status_options %}
-                        <option value="{{ s }}" {% if (task and task.overall_status == s) or (not task and s == 'Not Started') %}selected{% endif %}>{{ s }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Overall Status</label>
+                    {% if task %}
+                    <input type="text" value="{{ task.overall_status }}" disabled
+                        class="w-full px-3 py-2 border border-gray-200 dark:border-cc-border rounded-md text-sm bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                    <input type="hidden" name="overall_status" value="{{ task.overall_status }}">
+                    {% else %}
+                    <input type="hidden" name="overall_status" value="Not Started">
+                    <div class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">Auto-derived from location statuses</div>
+                    {% endif %}
                 </div>
                 <div>
                     <label for="task_priority" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
@@ -131,33 +149,52 @@
             </div>
         </div>
 
-        <!-- Links & Comments -->
-        <div class="mb-6">
+        <!-- Links & Comments (Alpine.js driven) -->
+        <div class="mb-6" x-data="linkManager()" x-init="init()">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-cc-border">Links & Comments</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Email Links -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Links</label>
-                    <div id="mail-links-container" class="space-y-2">
-                        <!-- Dynamic rows inserted here -->
+                    <div class="space-y-2">
+                        <template x-for="(link, i) in mailLinks" :key="'mail-' + i">
+                            <div class="flex items-center gap-2">
+                                <input type="text" x-model="link.name" placeholder="Email name"
+                                    class="flex-1 px-2 py-1.5 border border-gray-300 dark:border-cc-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                <input type="url" x-model="link.url" placeholder="https://outlook.office.com/..."
+                                    class="flex-1 px-2 py-1.5 border border-gray-300 dark:border-cc-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200"
+                                    @paste="handleEmailPaste(i)">
+                                <button type="button" @click="mailLinks.splice(i, 1)"
+                                    class="px-2 py-1.5 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm">&times;</button>
+                            </div>
+                        </template>
                     </div>
-                    <button type="button" onclick="addMailLinkRow()"
+                    <button type="button" @click="mailLinks.push({name: '', url: ''})"
                         class="mt-2 inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded hover:bg-blue-100 dark:hover:bg-blue-900/50">
                         + Add Email
                     </button>
-                    <input type="hidden" id="mail_links_json" name="mail_links_json" value="">
+                    <input type="hidden" name="mail_links_json" :value="jsonifyLinks(mailLinks)">
                 </div>
                 <!-- File Links -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">File Links</label>
-                    <div id="file-links-container" class="space-y-2">
-                        <!-- Dynamic rows inserted here -->
+                    <div class="space-y-2">
+                        <template x-for="(link, i) in fileLinks" :key="'file-' + i">
+                            <div class="flex items-center gap-2">
+                                <input type="text" x-model="link.name" placeholder="File name"
+                                    class="flex-1 px-2 py-1.5 border border-gray-300 dark:border-cc-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                <input type="url" x-model="link.url" placeholder="https://onedrive.live.com/..."
+                                    class="flex-1 px-2 py-1.5 border border-gray-300 dark:border-cc-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                <button type="button" @click="fileLinks.splice(i, 1)"
+                                    class="px-2 py-1.5 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm">&times;</button>
+                            </div>
+                        </template>
                     </div>
-                    <button type="button" onclick="addFileLinkRow()"
+                    <button type="button" @click="fileLinks.push({name: '', url: ''})"
                         class="mt-2 inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded hover:bg-blue-100 dark:hover:bg-blue-900/50">
                         + Add File
                     </button>
-                    <input type="hidden" id="file_links_json" name="file_links_json" value="">
+                    <input type="hidden" name="file_links_json" :value="jsonifyLinks(fileLinks)">
                 </div>
                 <div class="md:col-span-2">
                     <label for="comments" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comments</label>
@@ -167,14 +204,21 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-cc-border">
+        <!-- Action Buttons (with Alpine.js validation) -->
+        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-cc-border"
+             x-data="taskFormValidator()">
+            <div x-show="errors.length > 0" class="flex-1">
+                <template x-for="err in errors" :key="err">
+                    <p class="text-xs text-red-600 dark:text-red-400" x-text="err"></p>
+                </template>
+            </div>
             {% if task %}
             <a href="{{ url_for('tasks.detail', id=task.id) }}" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-cc-card border border-gray-300 dark:border-cc-border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</a>
             {% else %}
             <a href="{{ url_for('tasks.list') }}" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-cc-card border border-gray-300 dark:border-cc-border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</a>
             {% endif %}
-            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Save</button>
+            <button type="submit" @click="validate($event)"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Save</button>
         </div>
     </form>
 </div>
@@ -182,161 +226,100 @@
 
 {% block extra_js %}
 <script>
-    // ===== Dynamic Link Rows =====
-    const MAIL_ROW_HTML = (name, url) => `
-        <div class="link-row flex items-center gap-2">
-            <input type="text" placeholder="Email name" value="${name}"
-                class="link-name flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-            <input type="url" placeholder="https://outlook.office.com/..." value="${url}"
-                class="link-url flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-            <button type="button" onclick="this.parentElement.remove()"
-                class="px-2 py-1.5 text-red-600 hover:text-red-800 text-sm">&times;</button>
-        </div>`;
-
-    const FILE_ROW_HTML = (name, url) => `
-        <div class="link-row flex items-center gap-2">
-            <input type="text" placeholder="File name" value="${name}"
-                class="link-name flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-            <input type="url" placeholder="https://onedrive.live.com/..." value="${url}"
-                class="link-url flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-            <button type="button" onclick="this.parentElement.remove()"
-                class="px-2 py-1.5 text-red-600 hover:text-red-800 text-sm">&times;</button>
-        </div>`;
-
-    function addMailLinkRow(name = '', url = '') {
-        document.getElementById('mail-links-container').insertAdjacentHTML('beforeend', MAIL_ROW_HTML(escapeHtml(name), escapeHtml(url)));
-        const container = document.getElementById('mail-links-container');
-        const lastRow = container.lastElementChild;
-        const urlInput = lastRow.querySelector('.link-url');
-        urlInput.addEventListener('paste', function(e) {
-            setTimeout(() => {
-                const val = this.value;
-                const m = val.match(/^(https:\/\/outlook\.office\.com\/mail\/)inbox\/id\/(.+)$/);
-                if (m) this.value = m[1] + 'deeplink/read/' + m[2];
-            }, 0);
-        });
-    }
-
-    function addFileLinkRow(name = '', url = '') {
-        document.getElementById('file-links-container').insertAdjacentHTML('beforeend', FILE_ROW_HTML(escapeHtml(name), escapeHtml(url)));
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function collectLinks(containerId) {
-        const rows = document.querySelectorAll(`#${containerId} .link-row`);
-        const links = [];
-        rows.forEach(row => {
-            const name = row.querySelector('.link-name').value.trim();
-            const url = row.querySelector('.link-url').value.trim();
-            if (url) links.push({name: name || url, url: url});
-        });
-        return links;
-    }
-
-    // Sync hidden fields before form submit
-    document.querySelector('form').addEventListener('formdata', function(e) {
-        const mailLinks = collectLinks('mail-links-container');
-        const fileLinks = collectLinks('file-links-container');
-        e.formData.set('mail_links_json', mailLinks.length ? JSON.stringify(mailLinks) : '');
-        e.formData.set('file_links_json', fileLinks.length ? JSON.stringify(fileLinks) : '');
-    });
-
-    // Load existing links for edit mode
-    {% if task %}
-    {% if task.link_to_mail %}
-    try {
-        const existingMails = {{ task.link_to_mail | safe }};
-        existingMails.forEach(l => addMailLinkRow(l.name, l.url));
-    } catch(e) {}
-    {% endif %}
-    {% if task.link_to_file %}
-    try {
-        const existingFiles = {{ task.link_to_file | safe }};
-        existingFiles.forEach(l => addFileLinkRow(l.name, l.url));
-    } catch(e) {}
-    {% endif %}
-    {% endif %}
-
-    // Always start with at least one empty row if no existing data
-    if (!document.querySelector('#mail-links-container .link-row')) addMailLinkRow();
-    if (!document.querySelector('#file-links-container .link-row')) addFileLinkRow();
-
-    const countryEl = document.getElementById('scope_country');
-    const typeEl = document.getElementById('scope_location_type');
-    const selectAllEl = document.getElementById('select-all-locations');
-    const checkboxesContainer = document.getElementById('location-checkboxes');
-    const countEl = document.getElementById('location-count');
-
-    {% if task %}
-    const preSelectedIds = [{% for a in task.assignments.all() %}{{ a.location_id }}{% if not loop.last %},{% endif %}{% endfor %}];
-    {% else %}
-    const preSelectedIds = [];
-    {% endif %}
-
-    function loadLocations() {
-        const formData = new FormData();
-        formData.append('scope_country', countryEl.value);
-        formData.append('scope_location_type', typeEl.value);
-
-        fetch('/tasks/scope-preview', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            const locations = data.locations || [];
-            countEl.textContent = locations.length + ' locations';
-
-            if (locations.length === 0) {
-                checkboxesContainer.innerHTML = '<p class="text-sm text-gray-400 p-4">No matching locations</p>';
-                selectAllEl.checked = false;
-                return;
+function taskFormValidator() {
+    return {
+        errors: [],
+        validate(e) {
+            this.errors = [];
+            var form = this.$el.closest('form');
+            var taskName = form.querySelector('#task_name');
+            if (taskName && !taskName.value.trim()) {
+                this.errors.push('Task Name is required.');
+                taskName.classList.add('ring-2', 'ring-red-400');
+                setTimeout(function() { taskName.classList.remove('ring-2', 'ring-red-400'); }, 2000);
             }
-
-            let html = '';
-            locations.forEach(loc => {
-                const checked = preSelectedIds.includes(loc.id) ? 'checked' : '';
-                html += `
-                <label class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-                    <input type="checkbox" name="selected_locations" value="${loc.id}" ${checked}
-                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 location-cb">
-                    <div>
-                        <span class="text-sm text-gray-900 dark:text-gray-100">${loc.name}</span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">${loc.country || ''} / ${loc.type || ''}</span>
-                    </div>
-                </label>`;
-            });
-            checkboxesContainer.innerHTML = html;
-            updateSelectAll();
-        })
-        .catch(() => {
-            checkboxesContainer.innerHTML = '<p class="text-sm text-red-400 p-4">Error loading locations</p>';
-        });
-    }
-
-    function updateSelectAll() {
-        const boxes = document.querySelectorAll('.location-cb');
-        if (boxes.length === 0) return;
-        const allChecked = Array.from(boxes).every(b => b.checked);
-        selectAllEl.checked = allChecked;
-    }
-
-    selectAllEl.addEventListener('change', function() {
-        document.querySelectorAll('.location-cb').forEach(cb => cb.checked = this.checked);
-    });
-
-    checkboxesContainer.addEventListener('change', function(e) {
-        if (e.target.classList.contains('location-cb')) {
-            updateSelectAll();
+            var startDate = form.querySelector('#start_date');
+            var targetDate = form.querySelector('#target_date');
+            if (startDate && startDate.value && targetDate && targetDate.value) {
+                if (startDate.value > targetDate.value) {
+                    this.errors.push('Start Date cannot be after Target Date.');
+                    startDate.classList.add('ring-2', 'ring-red-400');
+                    targetDate.classList.add('ring-2', 'ring-red-400');
+                    setTimeout(function() {
+                        startDate.classList.remove('ring-2', 'ring-red-400');
+                        targetDate.classList.remove('ring-2', 'ring-red-400');
+                    }, 2000);
+                }
+            }
+            if (this.errors.length > 0) {
+                e.preventDefault();
+            }
         }
-    });
+    };
+}
 
-    countryEl.addEventListener('change', loadLocations);
-    typeEl.addEventListener('change', loadLocations);
+function linkManager() {
+    return {
+        mailLinks: [],
+        fileLinks: [],
+        init() {
+            {% if task and task.link_to_mail %}
+            try { this.mailLinks = {{ task.link_to_mail | safe }}; } catch(e) {}
+            {% endif %}
+            {% if task and task.link_to_file %}
+            try { this.fileLinks = {{ task.link_to_file | safe }}; } catch(e) {}
+            {% endif %}
+            if (!this.mailLinks.length) this.mailLinks.push({name: '', url: ''});
+            if (!this.fileLinks.length) this.fileLinks.push({name: '', url: ''});
+        },
+        handleEmailPaste(index) {
+            var self = this;
+            setTimeout(function() {
+                var val = self.mailLinks[index].url;
+                var m = val.match(/^(https:\/\/outlook\.office\.com\/mail\/)inbox\/id\/(.+)$/);
+                if (m) self.mailLinks[index].url = m[1] + 'deeplink/read/' + m[2];
+            }, 0);
+        },
+        jsonifyLinks(links) {
+            var valid = links.filter(function(l) { return l.url.trim(); });
+            if (!valid.length) return '';
+            return JSON.stringify(valid.map(function(l) { return {name: l.name || l.url, url: l.url}; }));
+        }
+    };
+}
 
-    loadLocations();
+function locationSelector() {
+    return {
+        country: '{{ task.scope_country if task and task.scope_country else "" }}',
+        locationType: '{{ task.scope_location_type if task and task.scope_location_type else "" }}',
+        locations: [],
+        selectedIds: [{% if task %}{% for a in task.assignments.all() %}{{ a.location_id }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}],
+
+        init() {
+            this.loadLocations();
+        },
+        async loadLocations() {
+            var fd = new FormData();
+            fd.append('scope_country', this.country);
+            fd.append('scope_location_type', this.locationType);
+            try {
+                var resp = await fetch('/tasks/scope-preview', { method: 'POST', body: fd });
+                var data = await resp.json();
+                this.locations = data.locations || [];
+            } catch(e) { this.locations = []; }
+        },
+        toggleAll(checked) {
+            this.selectedIds = checked ? this.locations.map(function(l) { return l.id; }) : [];
+        },
+        toggleLocation(id) {
+            var i = this.selectedIds.indexOf(id);
+            if (i > -1) { this.selectedIds.splice(i, 1); }
+            else { this.selectedIds.push(id); }
+        },
+        get allSelected() {
+            return this.locations.length > 0 && this.selectedIds.length === this.locations.length;
+        }
+    };
+}
 </script>
 {% endblock %}
