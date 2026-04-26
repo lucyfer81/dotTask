@@ -20,7 +20,9 @@
     </div>
 
     <!-- Location Filter (Alpine + htmx) -->
-    <div x-data="kanbanFilter({ initialLocId: '{{ location.id if filtered else '' }}' })" class="flex items-center gap-3">
+    <div x-data="kanbanFilter({ initialLocId: '{{ location.id if filtered else '' }}' })"
+         x-init="if(locId) $nextTick(() => filterLocation())"
+         class="flex items-center gap-3">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Location:</label>
         <select x-model="locId" @change="filterLocation()"
                 class="text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-1.5 bg-white dark:bg-cc-card text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
@@ -109,8 +111,15 @@
 <script>
 function kanbanFilter(config) {
     return {
-        locId: config.initialLocId,
+        locId: '',
+        init() {
+            var saved = localStorage.getItem('kanban-loc');
+            if (saved) this.locId = saved;
+            else if (config.initialLocId) this.locId = config.initialLocId;
+        },
         filterLocation() {
+            if (this.locId) localStorage.setItem('kanban-loc', this.locId);
+            else localStorage.removeItem('kanban-loc');
             var url = this.locId
                 ? '/tasks/kanban?location_id=' + this.locId
                 : '/tasks/kanban';

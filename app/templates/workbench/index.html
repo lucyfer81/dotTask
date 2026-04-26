@@ -4,8 +4,10 @@
 
 {% block content %}
 <div class="space-y-4">
-    <!-- Top: Dual Pivot Selector -->
-    <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-4">
+    <!-- Top: Dual Pivot Selector (Alpine.js enhanced) -->
+    <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-4"
+         x-data="workbenchSelector()"
+         x-init="restoreAndLoad()">
         <div class="flex flex-wrap items-center gap-4">
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">Location</label>
@@ -15,7 +17,7 @@
                         hx-target="#wb-task"
                         hx-swap="innerHTML"
                         hx-trigger="change"
-                        onchange="setTimeout(function(){ wbLoadContent(); }, 50)"
+                        @change="loadContent()"
                         class="w-full text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-2 bg-white dark:bg-cc-card text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">-- Select Location --</option>
                     {% for loc in locations %}
@@ -31,7 +33,7 @@
                         hx-target="#wb-location"
                         hx-swap="innerHTML"
                         hx-trigger="change"
-                        onchange="setTimeout(function(){ wbLoadContent(); }, 50)"
+                        @change="loadContent()"
                         class="w-full text-sm border border-gray-300 dark:border-cc-border rounded-md px-3 py-2 bg-white dark:bg-cc-card text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">-- Select Task --</option>
                     {% for task in tasks %}
@@ -40,10 +42,20 @@
                 </select>
             </div>
         </div>
+        <!-- Loading indicator -->
+        <div id="wb-loading" class="htmx-indicator mt-3">
+            <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 animate-pulse">
+                <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                Loading content...
+            </div>
+        </div>
     </div>
 
     <!-- Bottom: Dual Pane Content -->
-    <div id="wb-content">
+    <div id="wb-content" hx-indicator="#wb-loading">
         <div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-8 text-center text-gray-400 dark:text-gray-500">
             Select a location and task above to begin.
         </div>
@@ -53,18 +65,45 @@
 
 {% block extra_js %}
 <script>
-function wbLoadContent() {
-    var locId = document.getElementById('wb-location').value;
-    var taskId = document.getElementById('wb-task').value;
-    if (locId && taskId) {
-        htmx.ajax('GET', '/workbench/content', {
-            target: '#wb-content',
-            swap: 'innerHTML',
-            values: { location_id: locId, task_id: taskId }
-        });
-    } else {
-        document.getElementById('wb-content').innerHTML = '<div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-8 text-center text-gray-400 dark:text-gray-500">Select a location and task above to begin.</div>';
-    }
+function workbenchSelector() {
+    return {
+        loadContent() {
+            var locId = document.getElementById('wb-location').value;
+            var taskId = document.getElementById('wb-task').value;
+            if (locId) localStorage.setItem('wb-loc', locId);
+            else localStorage.removeItem('wb-loc');
+            if (taskId) localStorage.setItem('wb-task', taskId);
+            else localStorage.removeItem('wb-task');
+            if (locId && taskId) {
+                htmx.ajax('GET', '/workbench/content', {
+                    target: '#wb-content',
+                    swap: 'innerHTML',
+                    values: { location_id: locId, task_id: taskId },
+                    indicator: '#wb-loading'
+                });
+            } else {
+                document.getElementById('wb-content').innerHTML =
+                    '<div class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-8 text-center text-gray-400 dark:text-gray-500">Select a location and task above to begin.</div>';
+            }
+        },
+        restoreAndLoad() {
+            var locId = localStorage.getItem('wb-loc');
+            var taskId = localStorage.getItem('wb-task');
+            if (!locId || !taskId) return;
+            var locSelect = document.getElementById('wb-location');
+            var taskSelect = document.getElementById('wb-task');
+            if (locSelect) locSelect.value = locId;
+            if (taskSelect) taskSelect.value = taskId;
+            // Trigger HTMX option reload for linked dropdowns, then load content
+            var self = this;
+            this.$nextTick(function() {
+                // Fire change on location to refresh task options
+                htmx.trigger(locSelect, 'change');
+                // Wait for HTMX to update task options, then load content
+                setTimeout(function() { self.loadContent(); }, 500);
+            });
+        }
+    };
 }
 
 document.body.addEventListener('htmx:afterSwap', function(event) {

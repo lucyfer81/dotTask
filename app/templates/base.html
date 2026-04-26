@@ -23,6 +23,7 @@ tailwind.config = {
 }
 </script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -118,6 +119,9 @@ tailwind.config = {
         </div>
     </div>
 
+    <!-- Keyboard Shortcuts (Alpine.js driven) -->
+    <div x-data="keyboardShortcuts()" x-init="init()" @keydown.window="handle($event)"></div>
+
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.store('toast', {
@@ -150,6 +154,98 @@ document.addEventListener('alpine:init', () => {
         },
         cancel() { this.show = false; this._formEl = null; }
     });
+
+    // Keyboard shortcuts
+    Alpine.data('keyboardShortcuts', () => ({
+        init() {},
+        handle(e) {
+            // Don't trigger when typing in input/textarea/select
+            if (e.target.matches('input, textarea, select, [contenteditable]')) return;
+            // Ctrl+K: focus task search or go to tasks
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                var searchInput = document.querySelector('input[name="search"]');
+                if (searchInput) { searchInput.focus(); searchInput.select(); }
+                else window.location.href = '/tasks';
+            }
+            // Ctrl+N: new task
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                window.location.href = '/tasks/new';
+            }
+            // Ctrl+B: workbench
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                e.preventDefault();
+                window.location.href = '/workbench';
+            }
+        }
+    }));
+
+    // Form draft auto-save (backed by $persist via localStorage)
+    Alpine.data('formDraft', (storageKey) => ({
+        _key: storageKey,
+        _saveTimer: null,
+        _restored: false,
+
+        init() {
+            var saved = localStorage.getItem(this._key);
+            if (saved) {
+                var self = this;
+                setTimeout(function() {
+                    if (confirm('Found a saved draft. Would you like to restore it?')) {
+                        self.restore();
+                    } else {
+                        self.clear();
+                    }
+                }, 300);
+            }
+            var self = this;
+            this.$el.addEventListener('input', function(e) {
+                if (e.target.matches('input, textarea, select')) self.scheduleSave();
+            });
+            this.$el.addEventListener('submit', function() {
+                setTimeout(function() { self.clear(); }, 500);
+            });
+        },
+
+        scheduleSave() {
+            var self = this;
+            clearTimeout(this._saveTimer);
+            this._saveTimer = setTimeout(function() { self.save(); }, 800);
+        },
+
+        save() {
+            var data = {};
+            this.$el.querySelectorAll('input, textarea, select').forEach(function(el) {
+                if (el.name && el.type !== 'hidden' && el.type !== 'submit' && el.type !== 'button') {
+                    if (el.type === 'checkbox') data[el.name] = el.checked;
+                    else data[el.name] = el.value;
+                }
+            });
+            localStorage.setItem(this._key, JSON.stringify(data));
+        },
+
+        restore() {
+            try {
+                var data = JSON.parse(localStorage.getItem(this._key));
+                if (!data) return;
+                var self = this;
+                Object.keys(data).forEach(function(name) {
+                    var el = self.$el.querySelector('[name="' + name + '"]');
+                    if (!el) return;
+                    if (el.type === 'checkbox') el.checked = data[name];
+                    else el.value = data[name] || '';
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                this._restored = true;
+            } catch(e) {}
+        },
+
+        clear() {
+            localStorage.removeItem(this._key);
+        }
+    }));
 });
 
 // Backward-compatible global functions
