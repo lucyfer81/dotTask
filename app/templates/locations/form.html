@@ -11,7 +11,8 @@
     </div>
 
     <!-- Form -->
-    <form method="post" class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6">
+    <form method="post" class="bg-white dark:bg-cc-card shadow-sm rounded-lg border border-gray-200 dark:border-cc-border p-6"
+          x-data="formDraft('draft-location-{{ location.id if location else 'new' }}')">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Location Name -->
             <div>
@@ -60,18 +61,44 @@
                     class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
             </div>
 
-            <!-- IT Manager -->
-            <div>
-                <label for="it_manager" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">IT Manager</label>
-                <input type="text" id="it_manager" name="it_manager" value="{{ location.it_manager if location else '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
-            </div>
-
-            <!-- Primary IT Contact -->
-            <div>
-                <label for="primary_it_contact" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary IT Contact</label>
-                <input type="text" id="primary_it_contact" name="primary_it_contact" value="{{ location.primary_it_contact if location else '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-cc-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-cc-bg dark:text-gray-200">
+            <!-- IT Contacts (dynamic list) -->
+            <div class="md:col-span-2" x-data="contactList({
+                roles: [{% for r in it_roles %}'{{ r }}',{% endfor %}],
+                contacts: [
+                    {% if location and location.it_contacts %}
+                    {% for c in location.it_contacts %}
+                    { name: '{{ c.name|e }}', role: '{{ c.role|e }}', email: '{{ c.email|e }}', phone: '{{ c.phone|e }}' },
+                    {% endfor %}
+                    {% endif %}
+                ]
+            })">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IT Contacts</label>
+                <div class="space-y-3">
+                    <template x-for="(c, i) in contacts" :key="i">
+                        <div class="flex flex-wrap items-start gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-cc-border">
+                            <div class="flex-1 min-w-[140px]">
+                                <input type="text" x-model="c.name" name="contact_name" class="w-full px-2 py-1 border border-gray-300 dark:border-cc-border rounded text-sm dark:bg-cc-bg dark:text-gray-200" placeholder="Name">
+                            </div>
+                            <div class="w-[160px]">
+                                <select x-model="c.role" name="contact_role" class="w-full px-2 py-1 border border-gray-300 dark:border-cc-border rounded text-sm dark:bg-cc-bg dark:text-gray-200">
+                                    <option value="">-- Role --</option>
+                                    <template x-for="r in roles"><option :value="r" x-text="r"></option></template>
+                                </select>
+                            </div>
+                            <div class="flex-1 min-w-[160px]">
+                                <input type="email" x-model="c.email" name="contact_email" class="w-full px-2 py-1 border border-gray-300 dark:border-cc-border rounded text-sm dark:bg-cc-bg dark:text-gray-200" placeholder="Email">
+                            </div>
+                            <div class="w-[130px]">
+                                <input type="tel" x-model="c.phone" name="contact_phone" class="w-full px-2 py-1 border border-gray-300 dark:border-cc-border rounded text-sm dark:bg-cc-bg dark:text-gray-200" placeholder="Phone">
+                            </div>
+                            <button type="button" @click="contacts.splice(i, 1)" class="px-2 py-1 text-red-600 dark:text-red-400 hover:text-red-800 text-sm" title="Remove">&times;</button>
+                        </div>
+                    </template>
+                </div>
+                <button type="button" @click="contacts.push({ name: '', role: '', email: '', phone: '' })"
+                    class="mt-2 px-3 py-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 border border-blue-300 dark:border-blue-700 rounded">
+                    + Add Contact
+                </button>
             </div>
 
             <!-- Active Status -->
@@ -100,4 +127,15 @@
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function contactList(config) {
+    return {
+        roles: config.roles,
+        contacts: config.contacts.length ? config.contacts : [{ name: '', role: '', email: '', phone: '' }]
+    };
+}
+</script>
 {% endblock %}
