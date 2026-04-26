@@ -314,25 +314,6 @@ def save_field(id):
     return render_template("tasks/partials/display_field.html", task=task, field=field)
 
 
-@bp.route("/<int:id>/drawer")
-def drawer(id):
-    """Return drawer content fragment for HTMX slide-over panel."""
-    task = Task.query.get_or_404(id)
-    assignments = task.assignments.order_by(TaskAssignment.id).all()
-    local_statuses = get_options("local_statuses")
-    status_counts = []
-    for s in local_statuses:
-        count = sum(1 for a in assignments if (a.local_status or "Pending") == s)
-        if count > 0:
-            key = s.lower().replace(" ", "-")
-            status_counts.append((key, s, count))
-    return render_template(
-        "tasks/partials/drawer.html", task=task, assignments=assignments,
-        status_options=get_options("statuses"),
-        local_status_options=local_statuses,
-        status_counts=status_counts,
-    )
-
 
 def _parse_links(json_str):
     """Parse JSON links string into list of {"name": ..., "url": ...} dicts.

@@ -29,7 +29,14 @@ tailwind.config = {
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body class="bg-gray-50 dark:bg-cc-bg min-h-screen text-gray-900 dark:text-gray-200 transition-colors duration-300">
-<div id="toast-container"></div>
+    <!-- Toast Container (Alpine.js driven) -->
+    <div id="toast-container" x-data>
+        <template x-for="toast in $store.toast.items" :key="toast.id">
+            <div class="toast" :class="['toast-' + toast.type, toast.exiting ? 'toast-exit' : '']"
+                 x-text="toast.message"></div>
+        </template>
+    </div>
+
     <!-- Navigation -->
     <nav class="bg-white dark:bg-cc-card shadow-sm border-b border-gray-200 dark:border-cc-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,11 +55,16 @@ tailwind.config = {
                     </div>
                 </div>
                 <div class="flex items-center">
-                    <button id="theme-toggle" type="button" class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-cc-card focus:outline-none" title="Toggle dark mode">
-                        <svg id="theme-icon-light" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button id="theme-toggle" type="button"
+                            class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-cc-card focus:outline-none"
+                            title="Toggle dark mode"
+                            x-data="{ dark: localStorage.getItem('theme') === 'dark' }"
+                            x-init="if(dark) document.documentElement.classList.add('dark')"
+                            @click="dark = !dark; document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', dark ? 'dark' : 'light')">
+                        <svg x-show="!dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
-                        <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                         </svg>
                     </button>
@@ -66,7 +78,9 @@ tailwind.config = {
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-        <div class="mb-4 p-4 rounded-md {{ 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' if category == 'success' else 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300' if category == 'error' else 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' }}">
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)"
+             x-show="show" x-transition.opacity.duration.300ms
+             class="mb-4 p-4 rounded-md {{ 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' if category == 'success' else 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300' if category == 'error' else 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' }}">
             {{ message }}
         </div>
         {% endfor %}
@@ -77,66 +91,69 @@ tailwind.config = {
     </main>
 
     {% block extra_js %}{% endblock %}
-<!-- Drawer Panel -->
-<div id="drawer-overlay" onclick="closeDrawer()"></div>
-<div id="drawer-panel" class="bg-white dark:bg-cc-card shadow-2xl"></div>
-<script>
-// Theme toggle
-(function() {
-    const html = document.documentElement;
-    const toggle = document.getElementById('theme-toggle');
-    const iconLight = document.getElementById('theme-icon-light');
-    const iconDark = document.getElementById('theme-icon-dark');
 
-    function setTheme(dark) {
-        if (dark) {
-            html.classList.add('dark');
-            iconLight.classList.add('hidden');
-            iconDark.classList.remove('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconLight.classList.remove('hidden');
-            iconDark.classList.add('hidden');
+    <!-- Confirm Dialog (Alpine.js driven) -->
+    <div x-data x-show="$store.confirm.show"
+         class="fixed inset-0 z-[9999] flex items-center justify-center"
+         x-transition.opacity
+         @keydown.escape.window="$store.confirm.show && $store.confirm.cancel()">
+        <div class="fixed inset-0 bg-black/50" @click="$store.confirm.cancel()"></div>
+        <div class="relative bg-white dark:bg-cc-card rounded-lg p-6 shadow-xl max-w-md mx-4 border border-gray-200 dark:border-cc-border"
+             @click.stop>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirm</h3>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-6" x-text="$store.confirm.message"></p>
+            <div class="flex gap-3 justify-end">
+                <button @click="$store.confirm.cancel()"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-cc-card border border-gray-300 dark:border-cc-border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button @click="$store.confirm.proceed()"
+                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.store('toast', {
+        items: [],
+        add(message, type) {
+            type = type || 'info';
+            var id = Date.now();
+            this.items.push({ id: id, message: message, type: type, exiting: false });
+            var self = this;
+            setTimeout(function() {
+                var item = self.items.find(function(t) { return t.id === id; });
+                if (item) item.exiting = true;
+                setTimeout(function() { self.items = self.items.filter(function(t) { return t.id !== id; }); }, 300);
+            }, 3000);
         }
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-    }
-
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark') setTheme(true);
-
-    toggle.addEventListener('click', function() {
-        setTheme(!html.classList.contains('dark'));
     });
-})();
-</script>
-<script>
-// Drawer
-function openDrawer(url) {
-    var overlay = document.getElementById('drawer-overlay');
-    var panel = document.getElementById('drawer-panel');
-    panel.innerHTML = '<div class="p-8 text-center text-gray-500 dark:text-gray-300">Loading...</div>';
-    overlay.classList.add('active');
-    panel.classList.add('active');
-    htmx.ajax('GET', url, '#drawer-panel');
-}
-function closeDrawer() {
-    document.getElementById('drawer-overlay').classList.remove('active');
-    document.getElementById('drawer-panel').classList.remove('active');
-}
 
-// Toast
-function showToast(message, type) {
-    type = type || 'info';
-    var container = document.getElementById('toast-container');
-    var toast = document.createElement('div');
-    toast.className = 'toast toast-' + type;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(function() {
-        toast.classList.add('toast-exit');
-        setTimeout(function() { toast.remove(); }, 300);
-    }, 3000);
-}
+    Alpine.store('confirm', {
+        show: false,
+        message: '',
+        _formEl: null,
+        ask(message, formEl) {
+            this.message = message;
+            this._formEl = formEl;
+            this.show = true;
+        },
+        proceed() {
+            this.show = false;
+            if (this._formEl) { this._formEl.submit(); this._formEl = null; }
+        },
+        cancel() { this.show = false; this._formEl = null; }
+    });
+});
+
+// Backward-compatible global functions
+function showToast(message, type) { Alpine.store('toast').add(message, type); }
 </script>
 </body>
 </html>

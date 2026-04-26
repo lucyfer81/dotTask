@@ -46,7 +46,7 @@
                         {% for a in items %}
                         <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
                              data-task-id="{{ a.task_id }}" data-assignment-id="{{ a.id }}"
-                             onclick="openDrawer('{{ url_for('tasks.drawer', id=a.task_id) }}')">
+                             onclick="window.location.href='/tasks/{{ a.task_id }}'">
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 {{ a.task.task_name }}
                             </div>
@@ -63,7 +63,7 @@
                         {% for task in items %}
                         <div class="bg-white dark:bg-cc-card rounded-lg p-3 shadow-sm border border-gray-200 dark:border-cc-border cursor-grab scale-on-hover"
                              data-task-id="{{ task.id }}"
-                             onclick="openDrawer('{{ url_for('tasks.drawer', id=task.id) }}')">
+                             onclick="window.location.href='/tasks/{{ task.id }}'">
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 {{ task.task_name }}
                             </div>
