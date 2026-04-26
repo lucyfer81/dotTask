@@ -133,11 +133,18 @@ def detail(id):
             key = s.lower().replace(" ", "-")
             status_counts.append((key, s, count))
 
+    location_contacts_map = {}
+    for loc in unassigned_locations:
+        location_contacts_map[loc.id] = loc.contacts
+    for a in assignments:
+        location_contacts_map[a.location_id] = a.location.contacts
+
     return render_template(
         "tasks/detail.html", task=task, assignments=assignments,
         unassigned_locations=unassigned_locations,
         status_options=get_options("statuses"), priority_options=get_options("priorities"),
         local_status_options=local_statuses, status_counts=status_counts,
+        location_contacts_map=location_contacts_map,
     )
 
 
