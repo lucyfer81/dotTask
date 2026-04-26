@@ -153,10 +153,24 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div>
+                            <div x-data="itPersonSelect({ contacts: _locContacts, currentName: '{{ (assignment.it_name or '') | e }}' })">
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">IT Person</label>
-                                <input type="text" name="it_name" value="{{ assignment.it_name or '' }}"
-                                    class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                <input type="hidden" name="it_name" :value="selectedName">
+                                <input type="hidden" name="it_role" :value="selectedRole">
+                                <template x-if="contacts.length > 0 && !showManual">
+                                    <select @change="onSelect($event)"
+                                        class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                        <option value="">-- Select IT Person --</option>
+                                        <template x-for="c in contacts" :key="c.name">
+                                            <option :value="c.name" x-text="c.name" :selected="c.name === currentName"></option>
+                                        </template>
+                                        <option value="__other__">-- 手动输入 --</option>
+                                    </select>
+                                </template>
+                                <template x-if="contacts.length === 0 || showManual">
+                                    <input type="text" x-model="selectedName" placeholder="Optional"
+                                        class="w-full text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                </template>
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">Task Log</label>
@@ -193,10 +207,24 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div>
+                        <div x-data="itPersonSelect({ contacts: _locContacts, currentName: '' })">
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">IT Person</label>
-                            <input type="text" name="it_name" value="" placeholder="Optional"
-                                class="text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                            <input type="hidden" name="it_name" :value="selectedName">
+                            <input type="hidden" name="it_role" :value="selectedRole">
+                            <template x-if="contacts.length > 0 && !showManual">
+                                <select @change="onSelect($event)"
+                                    class="text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                                    <option value="">-- Select IT Person --</option>
+                                    <template x-for="c in contacts" :key="c.name">
+                                        <option :value="c.name" x-text="c.name"></option>
+                                    </template>
+                                    <option value="__other__">-- 手动输入 --</option>
+                                </select>
+                            </template>
+                            <template x-if="contacts.length === 0 || showManual">
+                                <input type="text" x-model="selectedName" placeholder="Optional"
+                                    class="text-sm border border-gray-300 dark:border-cc-border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-cc-bg dark:text-gray-200">
+                            </template>
                         </div>
                         <button type="submit" class="px-3 py-1 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700">Assign</button>
                     </form>
@@ -293,6 +321,7 @@
 
 {% block extra_js %}
 <script>
+var _locContacts = {{ location.contacts | tojson }};
 function assignmentFilter(config) {
     return {
         search: '',
@@ -306,6 +335,38 @@ function assignmentFilter(config) {
         get visibleCount() {
             var self = this;
             return this.items.filter(function(i) { return self.matches(i); }).length;
+        }
+    };
+}
+
+function itPersonSelect(config) {
+    return {
+        contacts: config.contacts || [],
+        currentName: config.currentName || '',
+        selectedName: config.currentName || '',
+        selectedRole: '',
+        showManual: false,
+        init() {
+            if (this.currentName) {
+                var match = this.contacts.find(function(c) { return c.name === this.currentName; }.bind(this));
+                if (match) {
+                    this.selectedRole = match.role || '';
+                } else if (this.contacts.length > 0) {
+                    this.showManual = true;
+                }
+            }
+        },
+        onSelect(event) {
+            var val = event.target.value;
+            if (val === '__other__') {
+                this.showManual = true;
+                this.selectedName = '';
+                this.selectedRole = '';
+            } else {
+                this.selectedName = val;
+                var contact = this.contacts.find(function(c) { return c.name === val; });
+                this.selectedRole = contact ? (contact.role || '') : '';
+            }
         }
     };
 }
