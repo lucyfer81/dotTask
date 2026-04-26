@@ -2,27 +2,27 @@ from datetime import date
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
-from app.models import Location, TaskAssignment, Task, ItContact
+from app.models import Location, TaskAssignment, Task
 from app.dropdowns import get_options
 
 bp = Blueprint("locations", __name__, url_prefix="/locations")
 
 
-def _save_contacts(location_id):
-    ItContact.query.filter_by(location_id=location_id).delete()
+def _save_contacts(loc):
     names = request.form.getlist("contact_name")
     roles = request.form.getlist("contact_role")
     emails = request.form.getlist("contact_email")
     phones = request.form.getlist("contact_phone")
+    contacts = []
     for i in range(len(names)):
         if names[i].strip():
-            db.session.add(ItContact(
-                location_id=location_id,
-                name=names[i].strip(),
-                role=roles[i] if i < len(roles) else "",
-                email=emails[i] if i < len(emails) else "",
-                phone=phones[i] if i < len(phones) else "",
-            ))
+            contacts.append({
+                "name": names[i].strip(),
+                "role": roles[i] if i < len(roles) else "",
+                "email": emails[i] if i < len(emails) else "",
+                "phone": phones[i] if i < len(phones) else "",
+            })
+    loc.contacts = contacts
 
 
 @bp.route("/")
@@ -149,7 +149,7 @@ def create():
         )
         db.session.add(loc)
         db.session.flush()
-        _save_contacts(loc.id)
+        _save_contacts(loc)
         db.session.commit()
         flash("Location created", "success")
         return redirect(url_for("locations.list"))
@@ -173,7 +173,7 @@ def edit(id):
         loc.region = request.form.get("region", "")
         loc.is_active = request.form.get("is_active") == "on"
         loc.comments = request.form.get("comments", "")
-        _save_contacts(loc.id)
+        _save_contacts(loc)
         db.session.commit()
         flash("Location updated", "success")
         return redirect(url_for("locations.list"))

@@ -70,7 +70,7 @@
                     </div>
                     <div class="sm:col-span-2">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">IT Contacts</dt>
-                        {% if location.it_contacts %}
+                        {% if location.contacts %}
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-gray-200 dark:border-cc-border">
@@ -81,7 +81,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for c in location.it_contacts %}
+                                {% for c in location.contacts %}
                                 <tr class="border-b border-gray-100 dark:border-gray-700">
                                     <td class="py-1.5 pr-3 text-gray-900 dark:text-gray-100">{{ c.name or '-' }}</td>
                                     <td class="py-1.5 pr-3"><span class="badge badge-in-progress">{{ c.role or '-' }}</span></td>

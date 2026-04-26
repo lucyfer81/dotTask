@@ -21,25 +21,24 @@ class Location(db.Model):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
+    it_contacts = db.Column(db.Text)
     assignments = db.relationship("TaskAssignment", backref="location", lazy="dynamic")
-    it_contacts = db.relationship("ItContact", backref="location", cascade="all, delete-orphan")
+
+    @property
+    def contacts(self):
+        if self.it_contacts:
+            try:
+                return json.loads(self.it_contacts)
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return []
+
+    @contacts.setter
+    def contacts(self, value):
+        self.it_contacts = json.dumps(value, ensure_ascii=False) if value else None
 
     def __repr__(self):
         return f"<Location {self.location_name}>"
-
-
-class ItContact(db.Model):
-    __tablename__ = "it_contact"
-
-    id = db.Column(db.Integer, primary_key=True)
-    location_id = db.Column(db.Integer, db.ForeignKey("location_master.id"), nullable=False)
-    name = db.Column(db.String(200))
-    role = db.Column(db.String(100))
-    email = db.Column(db.String(200))
-    phone = db.Column(db.String(100))
-
-    def __repr__(self):
-        return f"<ItContact {self.name}>"
 
 
 class Task(db.Model):

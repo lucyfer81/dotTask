@@ -62,23 +62,59 @@ def _migrate_db(db):
             ))
             conn.commit()
 
-        # Migrate it_manager / primary_it_contact → it_contact rows
+        # Add it_contacts JSON column to location_master
+        result = conn.execute(sqlalchemy.text(
+            "PRAGMA table_info(location_master)"
+        ))
+        loc_columns = {row[1] for row in result}
+        if 'it_contacts' not in loc_columns:
+            conn.execute(sqlalchemy.text(
+                "ALTER TABLE location_master ADD COLUMN it_contacts TEXT"
+            ))
+            conn.commit()
+
+        # Migrate data: it_contact table → location_master.it_contacts JSON
+        import json
         result = conn.execute(sqlalchemy.text(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='it_contact'"
         ))
         if result.fetchone():
-            from app.models import Location, ItContact
-            locations = Location.query.all()
-            for loc in locations:
-                existing = ItContact.query.filter_by(location_id=loc.id).count()
-                if existing > 0:
+            rows = conn.execute(sqlalchemy.text(
+                "SELECT location_id, name, role, email, phone FROM it_contact ORDER BY id"
+            )).fetchall()
+            from collections import defaultdict
+            grouped = defaultdict(list)
+            for r in rows:
+                grouped[r[0]].append({
+                    "name": r[1] or "", "role": r[2] or "",
+                    "email": r[3] or "", "phone": r[4] or "",
+                })
+            for lid, contacts in grouped.items():
+                conn.execute(sqlalchemy.text(
+                    "UPDATE location_master SET it_contacts = :json WHERE id = :lid"
+                ), {"json": json.dumps(contacts, ensure_ascii=False), "lid": lid})
+            conn.commit()
+
+        # Migrate data: legacy it_manager / primary_it_contact → it_contacts JSON
+        result = conn.execute(sqlalchemy.text(
+            "PRAGMA table_info(location_master)"
+        ))
+        loc_columns = {row[1] for row in result}
+        if 'it_manager' in loc_columns:
+            rows = conn.execute(sqlalchemy.text(
+                "SELECT id, it_manager, primary_it_contact, it_contacts FROM location_master"
+            )).fetchall()
+            for r in rows:
+                existing = json.loads(r[3]) if r[3] else []
+                if existing:
                     continue
-                if loc.it_manager:
+                contacts = []
+                if r[1]:
+                    contacts.append({"name": r[1], "role": "IT Manager", "email": "", "phone": ""})
+                if r[2]:
+                    contacts.append({"name": r[2], "role": "IT Coordinator", "email": "", "phone": ""})
+                if contacts:
                     conn.execute(sqlalchemy.text(
-                        "INSERT INTO it_contact (location_id, name, role) VALUES (:lid, :name, :role)"
-                    ), {"lid": loc.id, "name": loc.it_manager, "role": "IT Manager"})
-                if loc.primary_it_contact:
-                    conn.execute(sqlalchemy.text(
-                        "INSERT INTO it_contact (location_id, name, role) VALUES (:lid, :name, :role)"
-                    ), {"lid": loc.id, "name": loc.primary_it_contact, "role": "IT Coordinator"})
+                        "UPDATE location_master SET it_contacts = :json WHERE id = :lid"
+                    ), {"json": json.dumps(contacts, ensure_ascii=False), "lid": r[0]})
             conn.commit()

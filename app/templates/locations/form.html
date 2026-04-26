@@ -63,10 +63,9 @@
 
             <!-- IT Contacts (dynamic list) -->
             <div class="md:col-span-2" x-data="contactList({
-                roles: [{% for r in it_roles %}'{{ r }}',{% endfor %}],
                 contacts: [
-                    {% if location and location.it_contacts %}
-                    {% for c in location.it_contacts %}
+                    {% if location and location.contacts %}
+                    {% for c in location.contacts %}
                     { name: '{{ c.name|e }}', role: '{{ c.role|e }}', email: '{{ c.email|e }}', phone: '{{ c.phone|e }}' },
                     {% endfor %}
                     {% endif %}
@@ -82,7 +81,9 @@
                             <div class="w-[160px]">
                                 <select x-model="c.role" name="contact_role" class="w-full px-2 py-1 border border-gray-300 dark:border-cc-border rounded text-sm dark:bg-cc-bg dark:text-gray-200">
                                     <option value="">-- Role --</option>
-                                    <template x-for="r in roles"><option :value="r" x-text="r"></option></template>
+                                    {% for r in it_roles %}
+                                    <option value="{{ r }}">{{ r }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="flex-1 min-w-[160px]">
@@ -133,7 +134,6 @@
 <script>
 function contactList(config) {
     return {
-        roles: config.roles,
         contacts: config.contacts.length ? config.contacts : [{ name: '', role: '', email: '', phone: '' }]
     };
 }
